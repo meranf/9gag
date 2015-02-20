@@ -41,7 +41,7 @@ if (isset($_GET['code']))
 
 
 if (isset($_SESSION['token'])) 
-{ echo 's';
+{  
 	$gClient->setAccessToken($_SESSION['token']);
 }
 
@@ -50,7 +50,7 @@ if ($gClient->getAccessToken())
 {
 	  //For logged in user, get details from google using access token
 	  $user 				= $google_oauthV2->userinfo->get();
-	  print_r($user);
+	// print_r($user);
 	  $user_id 				= $user['id'];
 	  $user_name 			= filter_var($user['name'], FILTER_SANITIZE_SPECIAL_CHARS);
 	  $email 				= filter_var($user['email'], FILTER_SANITIZE_EMAIL);
@@ -58,67 +58,16 @@ if ($gClient->getAccessToken())
 	  $profile_image_url 	= filter_var($user['picture'], FILTER_VALIDATE_URL);
 	  $personMarkup 		= "$email<div><img src='$profile_image_url?sz=50'></div>";
 	  $_SESSION['token'] 	= $gClient->getAccessToken();
+	  ?>
+	  <script>
+		window.opener.gmailLogin('<?php  echo $user_id; ?>','<?php echo $email; ?>', '<?php echo $user_name; ?>', '<?php echo $profile_image_url; ?>');
+	  </script>
+	  <?php 
 }
 else 
 {
 	//For Guest user, get google login url
 	$authUrl = $gClient->createAuthUrl();
-}
-
-/*
-* Gmail Connect ends here
-*/
-
-
-
-
-
-	$error = $_REQUEST['error'];		
-		if($error == 'access_denied')
-		{ 
-			?>
-            <script>
-				//window.opener.document.getElementById("singnin_spinner2").style.display = 'none';
-				//window.opener.document.getElementById("singnin_spinnerFB").style.display = 'none';
-				window.close();
-            </script>
-            <?php
-			die();
-		}
-
-	$google_auth = googleAuth();
-	$obj = new Gmail();
-	$result = $obj->is_gmail_user($google_auth['me']);
-
-	if($result['exist'] == 0 )
-	{
-		
-	?>
-    <script>
-		/*window.opener.document.getElementById("signup").style.display = 'none';
-		window.opener.document.getElementById("create-account").style.display = 'block';
-		window.opener.document.getElementById("user_name_sign").value = '<?php if(isset($result['me']['name'])) echo $result['me']['name']['givenName'].' '.$result['me']['name']['familyName'];?>';
-		window.opener.document.getElementById("user_email").value = '<?php if(isset($result['me']['emails'][0]['value'])) echo $result['me']['emails'][0]['value'];?>';
-		window.opener.document.getElementById("gender").value = '<?php if(isset($result['me']['gender']))  echo $result['me']['gender'];?>';
-		window.opener.document.getElementById("google_id").value = '<?php if(isset($result['me']['id'])) echo $result['me']['id'];?>';
-		window.opener.document.getElementById("google_photo").value = '<?php if(isset($result['me']['image']['url'])) echo $result['me']['image']['url'];?>';
-		window.opener.document.getElementById("singnin_spinner2").style.display = 'none';*/
-	</script>
-
-    <?php
-	}
-	else
-	{
-    	$obj = new Login();
-    	//$rs = $obj->getGmailDetails($result['me']['id']);
-		?>
-		<script>
-
-		window.opener.gmailLogin('<?php if(isset($result['me']['id'])) echo $result['me']['id'] ;?>','<?php echo $result['me']['emails'][0]['value'];?>');
-		//window.opener.location.reload(false);
-        
-        </script>
-        <?php
-	}
-	?>
-    	<script>window.close();</script>
+} 
+?>
+	<script>window.close();</script>

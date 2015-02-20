@@ -119,11 +119,7 @@ var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
 							$(".loginspinner").hide();
 							if(data.status=="success"){
 								
-								if(data.first_time == 1){
-									try {
- 										_cyg_event('user');
-									}catch(err){}
-								}
+							 
 								// show new page
 									var userdata = {uid : uid};
 									
@@ -190,64 +186,23 @@ var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
 }
 
 
-function gmailLogin(id,email) {
-	     $("#icon-spinner").show();
-		 $("#singnin_spinner3").show();
-		  $("#singnin_spinnerGM").show();
-		 //$("#singnin_spinner3").css('display','block');
-		 var user_id = id;
+function gmailLogin(id,email, user_name, pic_path) {
 
-		$.post(canvas_url+"api/login.php",  {id: user_id, type:'google', email:email}, function(data){
-			 $("#icon-spinner").hide();
-			 $("#singnin_spinner3").hide();
-			  $("#singnin_spinnerGm").hide();
-			 
-		
-			 
-			if(data.status == 'success' && data.msg == 'signin_google')
-			{
-					
-					uid = data.data.id;
-					user_bitrate = data.data.bitrate;
-					login_user_name = data.data.name;
-					if(data.data.profile_photo != "" && data.data.profile_photo != null && data.data.profile_photo != "null")
-					{
-						$('#user_image_head').attr('src',data.data.profile_photo);
-					}
+	    $(".loginspinner").show();
+ 		 var user_id = id;
 
-					$(".hide-signup").trigger('click');
-					$('#user_name_head').html(data.data.short_name);
+		$.post(canvas_url+"api/login.php",  {id: id, type:'google', email:email, name:user_name, pic:pic_path}, function(data){
+ 			 
+			if(data.status == 'success'){
 					
-					
-					$("#header_before").hide();
-					$("#header_after").show();
-					
-					if ($('#create-account').is(':visible')) {
-						  
-						   $('#create-account').hide();
-					}
-					$(".cart-count span").text(data.cart_count);
-					if(show_check_out_page == 1)
-					{
-						window.location = '#checkout';
-					}
-					
-						if(temp_add_to_fav_params.length > 0 ){
-						AddToFavorite(temp_add_to_fav_params[0], temp_add_to_fav_params[1], temp_add_to_fav_params[2]);
-						temp_add_to_fav_params = new Array();
-					}
-					updateCartArray();
-					getCartCount();
+				$(".loginspinner").hide();
+				window.location = canvas_url;
+
+			}else{ 
+
 			}
-			else
-			{
-				$("#icon-spinner").hide();
-				$("#singnin_spinner3").hide();
-				$("#singnin_spinnerGM").hide();
-			}
+
 		  }, "json" );
-	
-
 }
 
 	$.ResetPassword = function(){
@@ -422,6 +377,70 @@ function gmailLogin(id,email) {
 		}
 	};
 
+	$.SubmitVideo = function(){
+		$('#error-video').html('').hide();
+
+		var errors = [];
+		var vide_url = $('#vide_url');
+		var title = $('#title');
+		var description = $('#description');
+		var category = $('input[name="form-channel-url"]:checked').val();
+ 
+
+		if($.trim(vide_url.val()) == ''){
+			vide_url.parent().addClass('has-error');
+			errors.push('Please enter email address.');
+		}else{
+			vide_url.parent().removeClass('has-error');
+		}
+
+		if($.trim(title.val()) == ''){
+			title.parent().addClass('has-error');
+			errors.push('Please enter password.');
+		}else{
+			title.parent().removeClass('has-error');
+		}
+
+		if($.trim(description.val()) == ''){
+			description.parent().addClass('has-error');
+			errors.push('Please enter password.');
+		}else{
+			description.parent().removeClass('has-error');
+		}
+		if(errors.length < 1){
+ 
+			$('#login-spinner').show();
+			var jsonData = {email:$.trim(email.val()),
+							password:password.val(),
+							'type': 'login'};
+			
+			var request = $.ajax({
+				
+				url: canvas_url+'api/login.php',
+				data: jsonData,
+				type: 'POST',
+				dataType:'json'
+			});
+			
+			request.done(function(data){
+ 
+				$('#login-spinner').hide();
+				if(data.status == 'success'){
+
+					window.location = canvas_url+'index.php';
+				}else{
+					$('#error-login').html('Incorrect email or password').addClass('alert-danger').show();
+				}
+				
+
+			});
+			request.fail(function(jqXHR, textStatus){
+				 
+				
+			});
+		}
+	};
+
 	// validates a email address
 	function isValidEmail(em_address) 
 	{
@@ -430,767 +449,58 @@ function gmailLogin(id,email) {
 	} // function ends
 
 
-	// get all videos
-	$.GetGallery = function()
-	{
-		if(gal_inprogress == 1){
-			return;
-		}
-		var genre = $("#video_genre").val();
-		
- 		$(".video-thumb").unbind();
-		
-		$('.galspinner').show();
- 		
-		var noOfRecords		= 9;
-		var start_limit = $("#gallery_start").val(); 
-		var Error_msg = '';
-		var orderBy = 'DESC';
- 		var resultDiv = '';
- 		var div ='';
-		var SortBy = $('#SortBy').val();
-		var genre = $('#video_genre').val();
-		var name='';
-		gal_inprogress = 1;
-		$.post(canvas_url+"api/get-videos.php",  {   start:start_limit,
-			noOfRecords:noOfRecords,
-			SortBy:$('#SortBy').val(),
-			OrderBy:$('#OrderBy').val(),
-			action:'getVideos',
-			genre:genre,
-			user_id:uid}, function(data){
-			
-				 
-			$('.galspinner').hide();
- 
-		if (data.data.length>0)
-		{
-		   var totalrecords = data.totalrecords;
-		   var all_videos   = data.data;
-		   var currentVideos = all_videos.length;
-		   var videos = '';
-		  
-		   for (var i=0;i<currentVideos;i++)
-		   { 	
-			
-				videos = all_videos[i];
- 				Global_videos_data[videos.id] = videos;
- 				if(videos.name.length > 20) videos.name.substr(0,20);
-				resultDiv += '<li class="video-user-detail video-user-detail-hover">\
-						<a href="javascript:;" class="video-thumb" data-id="'+videos.id+'">\
-						<div class="video-img"><img src="'+videos.thumb_path+'" /> <i class="play-icon"></i> </div>\
-						</a>\
-						<div class="user-pic"><img src="//graph.facebook.com/'+videos.uid+'/picture?width=106&amp;height=106" /> </div>\
-						<h2>'+videos.name+' <br>\
-						  <p>'+FROM_TEXT+' '+videos.country+'</p>\
-						</h2>\
-					  </li>';
-					  
-			} 
-			
- 		}else{
-				
-				if(SortBy == 'your_favt'){
-					Error_msg = NO_RECORD_FOUND_FAVT;
-				}else if(SortBy == 'cacclaimed'){
-					Error_msg = NO_RECORD_FOUND_CCA;
-				}else{
-					Error_msg = NO_RECORD_FOUND;
-				}
-				
-	   			resultDiv +='<span class="no-record-found" style="display:table;">'+Error_msg+'</span>';
- 	  	}
-			  gallery_start = $("#gallery_start").val();
-			  
-			  if(gallery_start == 0){
- 			  	$("#listings").html(resultDiv);
-			  }else{
-			  	$("#listings").append(resultDiv);
-			  }
-			  gal_inprogress = 0;
-			  gallery_start = parseInt(gallery_start) + parseInt(noOfRecords);
- 			$("#gallery_start").val(gallery_start);
-			 if( parseInt(totalrecords) > parseInt($("#listings li").length)){
-			  	$(".load-more").show();
-			  }else{
-				  $(".load-more").hide();
-			  }
- 			  
-			  $(".video-thumb").bind('click',function() {
- 					
- 					$.ShowVideo(this);	
-    		   });
- 			   
- 			}, "json" );
- 	}; 
+	
 
-
-	//play video	
-	$.ShowVideo = function(des){
-		
-		$(".vote").unbind('click');
-		$(".publishbtn").unbind('click');
-		
-		var video_id = $(des).data('id');
-		var html = '';
-		var video_data = 	Global_videos_data[video_id];
-		var total_votes = video_data.vote_count;
-		NewVote_text = parseInt(total_votes)+1;
-		NewVote_text = VOTE+' ('+NewVote_text+')';
- 		// set video player for mobile
-		if(detectmob()==true){
-			
-			html += '<span class="video-cross-icon"></span> <div class="user-pic" id="user_pic"><img src="//graph.facebook.com/'+video_data.uid+'/picture?width=106&amp;height=106" /></div><h2>'+video_data.name+'<br>\
-				  <p>'+FROM_TEXT+' '+video_data.country+'</p></h2>\
-				 <div class="video-wrapper">\
-				 <video width="300" height="247"  controls><source src="'+video_data.video_path+'" type="video/mp4"><source src="'+video_data.video_path.replace('.mp4','.ogg')+'" type="video/ogg">'+BROWSER_ERROR+'</video>\
-				 </div><div class="btn-border">\
-				 <div class="btn">\
-				 <a href="javascript:;" class="vote">'+VOTE+' ('+total_votes+')</a>\
-				 </div>\
-				 </div>\
-				 <div class="btn-border">\
-		  <div class="btn"><a href="javascript:;" class="publishbtn">'+SHARE+'</a>\
-		  </div><span class="spinner rotating video-popup-spinner" style="display:none;"></span></div></h2><span class="video-error-msg vote-error" style="display:none">'+ERROR+'</span>';
-
-
-		}else{
-			html += '<span class="video-cross-icon"></span> <div class="user-pic" id="user_pic"><img src="//graph.facebook.com/'+video_data.uid+'/picture?width=106&amp;height=106" /></div><h2>'+video_data.name+'<br>\
-				  <p>'+FROM_TEXT+' '+video_data.country+'</p></h2>\
-				 <div class="video-wrapper">\
-				 <video width="570" height="318" controls><source src="'+video_data.video_path+'" type="video/mp4"><source src="'+video_data.video_path.replace('.mp4','.ogg')+'" type="video/ogg">'+BROWSER_ERROR+'</video>\
-				 </div><div class="btn-border">\
-				 <div class="btn">\
-				 <a href="javascript:;" class="vote">'+VOTE+' ('+total_votes+')</a>\
-				 </div>\
-				 </div>\
-				 <div class="btn-border">\
-		  <div class="btn"><a href="javascript:;" class="publishbtn">'+SHARE+'</a>\
-		  </div><span class="spinner rotating video-popup-spinner" style="display:none;"></span></div></h2><span class="video-error-msg vote-error" style="display:none">'+ERROR+'</span>';
-	  
-		}
-
-		$("#video_details").html(html);
-		
-		$(".video-cross-icon").click(function() {
-        
-			$('.detail-video-popup').fadeOut();
-			$("#video_details").html(''); // stop video
-			$("#video_details2").html(''); // stop video
-    	});
-		
-		
-		$('.detail-video-popup').fadeIn();
-		
-		$(".vote").bind('click',function(){
-			$(".video-popup-spinner").fadeIn('fast');
-			
-			uid = parseInt($("#s_user_id").val());
-			//if not login
-			if(!(uid > 0)){
-				 
-				// check for IOs chrome
-				if(navigator.userAgent.match('CriOS')){
-					//if(true){
-					window.top.location = 'https://www.facebook.com/dialog/oauth?client_id='+application_id+'&redirect_uri='+decodeURIComponent(canvas_url)+'&scope=email&user_friends';
-
-				}else{
-					$.ConnectFacebook('vote', video_id);
-				}
-					
-			}else{
-					$.UpdateVideo(video_id, uid, 'vote');
-			}
- 			
- 		});
-		
-		$(".publishbtn").bind('click',function(){
-			
-			var shareImage = video_data.thumb_path; 
-			var user_name = video_data.name; 
- 			
-			Globalobj = {
-			method: 'feed',
-			link : canvas_url,    
-			picture: shareImage,
-			name: 'Toblerone Film Triangle',
-			caption: 'Toblerone Film Triangle',
-			description: 'Submit your amazing 2 minute video on Toblerone Film Triangle. Ask your friends to vote and gain maximum points to top the rankings and win Canon EOS 6D Camera.'
-			}; 
-			
-			if(!(uid > 0)){
-				
-				if(navigator.userAgent.match('CriOS')){
-					window.top.location = 'https://www.facebook.com/dialog/oauth?client_id='+application_id+'&redirect_uri='+decodeURIComponent(canvas_url)+'&scope=email&user_friends';
-
-				}else{
-					$.ConnectFacebook('share',video_id);
-				}
-				
-			}else{
-
-				FB.ui(Globalobj,shareResp);	
-				global_video_id = video_id;
- 			}	
-			$(".video-cross-icon").trigger('click'); // hide popup
-						
-	});
- 	
-	};
 	
 	function shareResp(response){
  
 		 if(response && response.post_id) {
 
 				  $.UpdateVideo(global_video_id, uid, 'share');
-			
-		} 
- 
-	}
-	//add video	
-	
-	$.userSubmission = function()
-	{		 
-	  	if(upload_inprogress == 1 || video_submiting == 1){
-			return;
-		}
-		var video_path 			= 	$.trim($("#video_path").val());
-		var name		 		= 	$.trim($("#user_name").val());
-		var email 	 			= 	$.trim($("#user_email").val());
-		var phone				= 	$.trim($("#user_phone").val());
-		var user_phone_code		= 	$("#user_phone_code").val();
-		var country				= 	$.trim($("#user_country").val());
-		var genre				= 	$("#video_genre").val(); 
-		uid 					=	$("#s_user_id").val();
-		var global_show = 0;
-		$(".video-error-msg").hide();
-		var error=true;
-		$('#user_name').removeClass('error');
-		$('#user_email').removeClass('error');
-		$('#user_phone').removeClass('error');
-		$('#country_div').removeClass('error');
-		$('#genere_div').removeClass('error');
-		$('#upload_file_div').removeClass('error');
- 		   var filter = /^[0-9-+]+$/;
-		   
-		if(video_path == ''){
-		
-			$('#upload_file_div').addClass('error');
-			$(".video-error-msg").html(PLEASE_SELECT_VIDEO).fadeIn().delay(2000).fadeOut(1000);
-			global_show = 1;
-			error=false;
-		}
-	    if(name == '')
-		{
-			$('#user_name').addClass('error');
-			$('#user_name').focus(function() {
-				$('#user_name').removeClass('error');
- 			});
-			error=false;
-			
-		}
-		if(email == '' || isValidEmail(email) == false)
-		{
-			$('#user_email').addClass('error');
-			$('#user_email').focus(function() {
-				$('#user_email').removeClass('error');
-			});
-			error=false;
-			
-		}
-		if(phone == '' || !filter.test(phone))
-		{
-			$('#user_phone').addClass('error');
-			$('#user_phone').focus(function() {
-			$('#user_phone').removeClass('error');
-			});
-			error=false;
-			
-		}
-		if(country == 0)
-		{
-			$('#country_div').addClass('error');
-			$('#user_country').focus(function() {
-				$('#country_div').removeClass('error');
-			});
-			error=false;
-			
-		}
-		if(genre == 0)
-		{
-			$('#genere_div').addClass('error');
-			$('#video_genre').focus(function() {
-			$('#genere_div').removeClass('error');
-			});
-			error=false;
-		}
-		if(error==false){
-		if(global_show == 0){
- 				$(".video-error-msg").html(INVALID_FEILDS).fadeIn().delay(2000).fadeOut(1000);
-				global_show = 1;
-			}
-		} 
-		if(!$("#terms-accept").is(":checked")){
-			if(global_show == 0){
- 				$(".video-error-msg").html(PLEASE_ACCEPT_TERM_CONDITIONS).fadeIn().delay(2000).fadeOut(1000);
-				global_show = 1;
-			}
-				error=false;
-		}
-		
- 		if(error)
-		{
-			video_submiting = 1;
-			$('.spinner').fadeIn('fast');
- 			phone = user_phone_code+'-'+phone;
-			$.post(API_URL+"add-video-entry.php", {
-				uid:uid,
-				video_path:video_path,
-				name:name,
-				email:email,
-				phone:phone,
-				country:country,
-				genre:genre,
-				}, function(data){
-						$('.spinner').fadeOut('fast');
-						if(data.status=="success"){
-							try {
- 								_cyg_event('videos_upload');
-							}catch(err){}
-							
-							$("#form_div").slideUp();
-							$('.upload-video-section').addClass('uploaded-thankyou');
- 							$(".video-thanks-msg").slideDown();
-							$('html,body').animate({
-                			    scrollTop: 0
-             				   }, 500);
-							
-							if(LANGUAGE == 'en'){
-
-								$("#iframecoverdiv").html('<iframe src="http://4534016.fls.doubleclick.net/activityi;src=4534016;type=toble0;cat=mdz_t000;ord=1?" width="1" height="1" frameborder="0" style="display:none"></iframe>');
-
-							}else{
-
-								$("#iframecoverdiv").html('<iframe src="http://4534016.fls.doubleclick.net/activityi;src=4534016;type=toble0;cat=mdz_t001;ord=1?" width="1" height="1" frameborder="0" style="display:none"></iframe>');
-							}
-							 //video_submiting = 0;
- 							
-						}else{
-							$(".video-error-msg").html(MORE_THAN_20MB).fadeIn();
-							 video_submiting = 0;
-						}
-						 
-					}, "json" );
-		} 
-	};
-	
-	//display leaderboard	
- 	$.Leaderboard = function()
-	{
-		$('.rankingspinner').show();
-		var noOfRecords		= 10;
-		var start_limit = gallery_start; 
-		var orderBy = 'DESC';
-		var resultDiv = '';
-	 
-		var name='';
- 		$.post(canvas_url+"api/get_ranking.php",  {   start:start_limit,
-			noOfRecords:noOfRecords,
-			SortBy:'id',
-			OrderBy:'DESC',
-			action:'GetRankings' 
-			}, function(data){
-				 
-			$('.rankingspinner').hide();
-		 
-			if (data.data.length>0)
-			{
-			   var totalrecords = data.totalrecords;
-			   var all_videos   = data.data;
-			   var currentVideos = all_videos.length;
-			   var videos = '';
-			  var total_points = 0;
-			   for (var i=0;i<currentVideos;i++)
-			   { 	
-			   		
-					videos = all_videos[i];
-					total_points = parseInt(videos.vote_count)+parseInt(videos.total_points);
-					//resultDiv += '<p class="showVideo" data-video_id="'+videos.id+'"><img width="50" src="'+videos.thumb_path+'"></p><br /><br />';
-					resultDiv += '<tr>\
-								<td>'+(parseInt(gallery_start+i)+1)+'</td>\
-								<td><span><img src="//graph.facebook.com/'+videos.uid+'/picture?width=51&amp;height=51"></span>\
-								  <h3><a href="javascript:;">'+videos.name+'</a></h3>\
-								  <p>'+FROM_TEXT+' '+videos.country+'</p></td>\
-								<td>'+videos.vote_count+'</td>\
-								<td>'+videos.share_count+'</td>\
-								<td>'+total_points+'</td>\
-							  </tr>';
-				}
-		  
-			}else{
-				
-					resultDiv +='<tr><td colspan="5"><span style="float: none; font-size: 16px; font-weight: lighter; height: auto; margin: 0 auto;  max-width: 500px; text-align: center; width: 100%;" class="no-record-found">'+RANKING_ERROR+'</span></td></tr>';
-			}
- 				
-  		  if(gallery_start == 0){
- 			  	$("#leaderboard").html(resultDiv);
-			  }else{
-			  	$("#leaderboard").append(resultDiv);
-			  }
-			  gallery_start = gallery_start+ noOfRecords;
- 			
-			 if( parseInt(totalrecords) > parseInt($("#leaderboard tr").length)){
-			  	$(".load-more").show();
-			  }else{
-				$(".load-more").hide();
-			  }
-			  
-		}, "json" );
-	};
-	
-	//get all assets
-	$.GetAssets = function(start)
-	{
- 		$('#spinner-leaderboard').hide();
-		var noOfRecords		= 10;
-		var start_limit = start; 
-		var orderBy = 'DESC';
-		var resultDiv = '';
-	 
-		var name='';
-	 	$('#gallery-spinner').show();
-		$.post(canvas_url+"api/get_assets.php",  {   start:start_limit,
-			noOfRecords:noOfRecords,
-			SortBy:'id',
-			OrderBy:'DESC',
-			action:'GetAssets' 
-			}, function(data){
-				 
-				$('#spinner-leaderboard').hide();
-				 
-				if (data.data.length>0)
-				{
-				   var totalrecords = data.totalrecords;
-				   var all_assets   = data.data;
-				   var currentAssets = all_assets.length;
-				   var assets = '';
-				  
-				   for (var i=0;i<currentAssets;i++)
-				   { 	
-						assets = all_assets[i];
-						assets.media_path = assets.media_path.replace('assets/','assets/assets-icons/');
-						resultDiv += '<li class="video-user-detail mostrecentvideos">\
-									<div class="video-img" ><img style="" src="'+assets.media_path+'" /></div>\
-									<h2>\
-									  <a href="download.php?id='+assets.id+'" target="_blank" >\
-									  <p>'+assets.title+'</p>'+DOWNLOAD+'</a>\
-									   </h2>\
-								  </li>';
-					}
-			  
-				}else{
-					
-						resultDiv +='<div style="text-align: center;"> <h2 style="width: 100%;text-align:center;">'+NO_RECORD_FOUND+'</h2></div>';
-				}
- 				
-		 $("#assetslist").html(resultDiv);
- 		 
-		 }, "json" );
-	};
-	
-function myfunc()
-{ 
-	}	
-	//get all winners
-	$.GetWinners = function(start)
-	{
- 		$('#spinner-winners').hide();
-		var noOfRecords		= 10;
-		var start_limit = start; 
-		var orderBy = 'DESC';
-		var resultDiv = '';
-	 
-		var name='';
-	 	$('#gallery-spinner').show();
-		$.post(canvas_url+"api/get_ranking.php",  {   start:start_limit,
-			noOfRecords:noOfRecords,
-			SortBy:'id',
-			OrderBy:'DESC',
-			action:'getWinners' 
-			}, function(data){
-				 
-				$('#spinner-winners').hide();
-				 
-				if (data.data.length>0)
-				{
-				   var totalrecords = data.totalrecords;
-				   var all_winners   = data.data;
-				   var currentWinners = all_winners.length;
-				   var winners = '';
-				   
-				   var jury_index = 0;
-				   var people_index = 0;
-				   
-				   var jury_arr = [];
-				   var people_arr = [];		
-			
-				   var resultDiv = '';
-				   var peopleDiv= '';
-				   var default_div = '<div class="post pending"><div class="img"> <span>?</span> </div><div class="content"><h3>'+WINNER_TOBE_ANNOUCED+'</h3><p>'+WINNERS_LOC+'</p></div></div>';
-					$(all_winners).each(function(i,winners){
-						
-						//winners = winners;
-						
-						 if(winners.type == 'admin'){
-							 jury_arr.push(winners);
-							 
-							 resultDiv  +='<div class="post"><div class="img"> <img width="100" src="//graph.facebook.com/'+winners.video_data.uid+'/picture?width=100&height=101"> </div>\
-								<div class="content">\
-								  <h3>'+winners.video_data.name+'</h3>\
-								  <p>'+FROM_TEXT+' '+winners.video_data.country+'</p>\
-								</div></div>';
-								 jury_index++;
-							 
-						 }else{
-							 people_arr.push(winners);
-							 peopleDiv  += '<div class="post"><div class="img"> <img width="100" src="//graph.facebook.com/'+winners.video_data.uid+'/picture?width=100&height=101"> </div>\
-								<div class="content">\
-								  <h3>'+winners.video_data.name+'</h3>\
-								  <p>'+FROM_TEXT+' '+winners.video_data.country+'</p>\
-								</div></div>';
-								people_index++;
-							 
-						 }
-						 
-					
-					}).promise().done(function(){
-					
-						if(typeof jury_arr[0] == 'undefined' ){
-							resultDiv += default_div;
-						}
-						if(typeof jury_arr[1] == 'undefined' ){
-							resultDiv += default_div;
-						}
-						if(typeof jury_arr[2] == 'undefined' ){
-							resultDiv += default_div;
-						}
-						if(typeof people_arr[0] == 'undefined' ){
-							peopleDiv += default_div;
-						}
-						if(typeof people_arr[1] == 'undefined' ){
-							peopleDiv += default_div;
-						}
-						if(typeof people_arr[2] == 'undefined' ){
-							peopleDiv +=  default_div;
-						}
-						
-						 $("#jury_winner").fadeOut(500, function() {
-    							   $("#jury_winner").html(resultDiv).fadeIn();
-     					});
-					 
-						$("#peoples_winner").fadeOut(500, function() {
-									$("#peoples_winner").html(peopleDiv).fadeIn(500);
- 						});
-						
-					
-					});
-					
-				}else{
-					
-						resultDiv +='<div style="text-align: center;"> <h2 style="width: 100%;text-align:center;">'+NO_RECORD_FOUND+'</h2></div>';
-				}
- 				
-		 $("#winners").html(resultDiv);
- 		 
-		 }, "json" );
-	};
-	
- 	$.UpdateVideo = function(video_id,uid,type){
-		
-		if(type == 'share'){
-			
-			try {
- 				_cyg_event('publish_feed');
-			}catch(err) {}
-		}
-		// update log
-		$.post(API_URL+"update-video.php", {uid:uid, video_id:video_id, type:type}, function(data){
-						 
-			$(".video-error-msg").css('text-align','center');
-			$(".video-popup-spinner").fadeOut('fast');
-			if(data.data.status=="success"){
-				if(type == 'vote'){
-					try {
- 						_cyg_event('unique_votes');
-					}catch(err) {}
-					
-					$('.vote').html(NewVote_text);
-				}
-				// show new page
-				$(".video-error-msg").text(VOTE_SUBMITTED_SUCCESSFULLY).fadeIn().delay(3000).fadeOut(500, function(){
-				
-				});
-				
-			}else{
-				 
-				 $(".video-error-msg").text(ALREADY_VOTED_VIDEO).fadeIn().delay(3000).fadeOut(500, function(){
-				
-				});
-			}
- 		}, "json" );
-	};
-	
-	
-	//update share or vote count of video
-	/*$.UpdateVideo(video_id,uid,type) = function(){
-		// update log
-		$.post(API_URL+"update-video.php", {uid:uid, video_id:video_id, type:type}, function(data){
-						
-		if(data.status=="success"){
-			// show new page
-			//
-		}else{
-			 
-		}
- 					}, "json" );
-	};*/
-	
- 	 $.msieversion = function()
-	 {
-	   var ua = window.navigator.userAgent;
-	   var msie = ua.indexOf("MSIE ");
-	   if (msie > 0)      return true; // If Internet Explorer, return version number
- 	   else        return false;    // If another browser, return 0
-	};
-
-	//checking IE 
-	var is_ms = $.msieversion();
-	
-	if(is_ms){
-		//$("#upload_msie").show();
-		//$("#upload_others").hide();
-	}
-	
-	$.SwitchLang = function(){
-		
-		var switch_lang = $("#switch_lang").val();
-		
-		window.location = canvas_url+sPage+'?lang='+switch_lang;
-	}
-	$.playVideo = function(filename){
-		var sel_class = '';
-		if(detectmob()){
-			sel_class = 'youtube-video';
-		}else{
-			sel_class = '';
-		}
-
-		var video_url = '';
-		if(filename == 'horror'){
-			video_url = '//www.youtube.com/embed/AxORLBfZBLg?list=PLbnLDJxZttKlcDU3iAgM_rZAFman5qjUN';
-			
-		}else if(filename == 'comedy'){
-			video_url = '//www.youtube.com/embed/nhQgEZsgz90?list=PLbnLDJxZttKlcDU3iAgM_rZAFman5qjUN';
-			
-		}else if(filename == 'action'){
-			video_url = '//www.youtube.com/embed/OgCyVzzYk4M?list=PLbnLDJxZttKlcDU3iAgM_rZAFman5qjUN';
-			
-		}else{
-		
-		}
-			
-	
-		
-		 $("#video_details2").html('<span style="top:19px;" class="video-cross-icon"></span><div class="video-wrapper '+sel_class+'" id=""><iframe width="570" height="318" src="'+video_url+'" frameborder="0" allowfullscreen></iframe></div>');
-		 
-      $("#intro_video").fadeIn();
-		
-		$(".video-cross-icon").click(function() {
-			$('.detail-video-popup').fadeOut();
-			$("#video_details").html(''); // stop video
-			$("#video_details2").html(''); // stop video
-  	    });
-	  
-    
-		
-	};
-	/*************************************************OPERATIONS************************************************/
-$(document).ready(function() {
-	
-	
-	  $(".section-heading i").click(function() {
-		  
-		var sel_class = '';
-		if(detectmob()){
-			sel_class = 'youtube-video';
-		}else{
-			sel_class = '';
-		}
-		 
-		  
-		 $("#video_details2").html('<span style="top:19px;" class="video-cross-icon"></span><div class="video-wrapper '+sel_class+'" id=""><iframe width="570" height="318" src="//www.youtube.com/embed/B1jE5fK7n1g?list=PLbnLDJxZttKlcDU3iAgM_rZAFman5qjUN" frameborder="0" allowfullscreen></iframe></div>');
-		 
-      $("#intro_video").fadeIn();
-		
-		$(".video-cross-icon").click(function() {
-			$('.detail-video-popup').fadeOut();
-			$("#video_details").html(''); // stop video
-			$("#video_details2").html(''); // stop video
-  	    });
-	  
-    });
-  	 
-	 
-	 
-	/* if($(window).width() >= 800){
-		  $("#style1").attr("disabled", "disabled");
-		  $("#style2").attr("disabled", "disabled");
- 	}*/
-	$('.goto_gal').click(function(){
-		$('.goto_gal_spin').show();
-	});
-	 
-	/*************************************************GLOBALS***************************************************/
-	if(sPage == 'upload-video.php'){
-		
-		 $.FileUpload(); // initialize file uploader
-		 $("#user_name").val($("#s_user_name").val());
-		 $("#user_email").val($("#s_user_email").val());
-		 
-		 $("#upload_video_nav").addClass('selected'); 
-		 
-		$(".input-file span").click(function(){
-			
-  			 $("#fileupload").trigger('click');
- 		});
+ 		} 
  	}
-	
-	if(sPage == 'gallery.php'){
-		$("#gallery_nav").addClass('selected'); 
-		
-		$("#video_genre").change(function() {
-			$("#gallery_start").val(0);
-			$("#listings").html('<span style="display: block;" class="spinner rotating"></span>');
-				$.GetGallery();
-			
-		});
-		
-		$.GetGallery();
-	}
-	
-	if(sPage == 'ranking.php'){
-		$("#ranking_nav").addClass('selected'); 
-		$.Leaderboard(0);
-	}
-	if(sPage == 'winners.php'){
-		$("#winners_nav").addClass('selected'); 
-		$.GetWinners(0);
-	}
 
-	if(sPage == 'assets.php'){
-		$("#assets_nav").addClass('selected'); 
-		//$.GetAssets(0);
-	}
+function parseVideo(url) {
+
+    url.match(/(http:|https:|)\/\/(player.|www.)?(dailymotion\.com|vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(\&\S+)?/);
+    var type = '';
+    var video_id = '';
+    if (RegExp.$3.indexOf('youtu') > -1) {
+        type = 'youtube';
+        video_id =  RegExp.$6;
+    }
+    if (RegExp.$3.indexOf('vimeo') > -1) {
+        type = 'vimeo';
+        video_id =  RegExp.$6;
+    }
+
+    if (RegExp.$3.indexOf('dailymotion') > -1) {
+        type = 'dailymotion';
+        video_id =  url.split('/').pop();
+        video_id = video_id.split('_');
+        video_id = video_id[0];
+    }
+
+    return {
+        provider: type,
+        id: video_id 
+    };
+}
+
+$(function(){
+	$("#vide_url").bind('chage, blur', function(){
+		var url = $("#vide_url");
+
+		videoData = parseVideo($.trim(url.val()));
+		console.log(videoData);
+		if (videoData.id == '' || videoData.provider == '') {
+ 				url.parent().addClass('has-error');
+				$('#error-video').html('Only vimeo and dailymotion, vimeo and youtube url\'s are allowed.').removeClass('hide');
+			} else{
+				url.parent().removeClass('has-error');
+				$('#error-video').addClass('hide');
+			}
+	});
 
 	$(".invitefriends").click(function(){
 		
@@ -1220,10 +530,14 @@ $(document).ready(function() {
 	 }
 	}
 
+	$("#video_submit").click(function(){
+		$.SubmitVideo();
+	});
 	//Facebook Connect
 	$(".login").click(function(){
 		$.login();
 	});
+
 	$(".signup_user").click(function(){
 		$.signup();
 	});
@@ -1254,44 +568,9 @@ $(document).ready(function() {
 		//}
 		
 	});
-	$(".upload_video_btn").click(function(){
-		uid = $("#s_user_id").val();
-		if(uid > 0){
-			window.location = 'upload-video.php';
-		}else{
-			
-			if(navigator.userAgent.match('CriOS')){
-			
-			uid = $("#s_user_id").val();
-			
-			if(uid > 0){
-				window.location = 'upload-video.php';
-			}else{
-				window.top.location = 'https://www.facebook.com/dialog/oauth?client_id='+application_id+'&redirect_uri='+decodeURIComponent(canvas_url)+'&scope=email&user_friends';
-			}
-
-
-			}else{
-				$.ConnectFacebook('home');
-			}
-		}
-		
-	});
+	
  	
  	//Submit Video Handler
-	$(".submitvideo").click(function(){
-		
-		$.userSubmission();
-	});
-	$(".load-more").click(function(){
-		
-		if(sPage == 'gallery.php'){
-			$.GetGallery();
-		}
-		if(sPage == 'ranking.php'){
-			$.Leaderboard();
-		}
-	});
- 	
+	
+ 	 
 });
-

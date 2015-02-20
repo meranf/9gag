@@ -24,40 +24,9 @@
     <!-- Static navbar -->
 <?php include('inc/header.php'); ?>
 
+<?php include('inc/channel.php'); ?>
+
  
-    <div class="channel-bar">
-        <div class="container">
-            <ul class="nav nav-tabs channel">
-                <li>
-                    <a href="">Home</a>
-                </li>
-
-                <li class="">
-                    <a class="badge-evt"  href="">Game</a>
-                </li>
-
-                <li class="">
-                    <a class="badge-evt"  href="">Fail &amp; Prank</a>
-                </li>
-
-                <li class="">
-                    <a class="badge-evt" href="">Cute</a>
-                </li>
-
-                <li class="">
-                    <a class="badge-evt"  href="">Music</a>
-                </li>
-
-                <li class="">
-                    <a class="badge-evt" href="">Movie &amp; TV</a>
-                </li>
-
-                <li class="">
-                    <a class="badge-evt"  href="">NSFW</a>
-                </li>
-            </ul>
-        </div><!-- / container -->
-    </div>
 
     <div class="post-list-t1 cover">
         <div class="badge-post-grid-container row no-gutter" data-grid-key=
@@ -281,7 +250,7 @@
         </div><!-- / container --><a style="font-style: italic" href="javascript:%20void(0);" class="badge-back-to-top back-to-top fa fa-arrow-up"></a>
     </div>
 
-    <div class="overlay-box-container" data-site-id="tv" id=
+  <!--   <div class="overlay-box-container" data-site-id="tv" id=
     "jsid-container-email-subscription">
         <div class="box">
             <a class="badge-subscription-close badge-evt close" data-evt=
@@ -296,15 +265,15 @@
                     "email"><span class="input-group-btn"><a class=
                     "badge-subscription-submit btn btn-primary" href=
                     "javascript:void(0);">Subscribe</a></span>
-                    <!-- / input-group-btn -->
-                </div><!-- / input-group -->
+                     
+                </div> 
 
                 <div class="badge-subscription-msg subscribe-message hide">
                     <p>Thank you for subscribing.</p>
-                </div><!-- / subscribe-message -->
-            </div><!-- / box-content -->
-        </div><!-- / box -->
-    </div>
+                </div> 
+            </div> 
+        </div> 
+    </div> -->
 
     <div class="alert-message-container" id="jsid-alert-message">
     </div>

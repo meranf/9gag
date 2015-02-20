@@ -6,7 +6,7 @@ include_once("config.php");
 /* This call generate when user login to the app. Please note that, client will first check user data in cache. If they got the data than it means this is an existing user and will not generate the login call. If the user is new or cache has been cleared than client make this call. Once received the data from call, client should save that data in cache so that they can use it in future. */
 if(isset($_REQUEST["email"]) && isset($_REQUEST["password"]) && $_REQUEST["type"] == 'login'  )
 {
-		$sql = "Select IFNULL(COUNT(userId),0) as userexist , id from user where email = '".$_REQUEST["email"]."' and password = '".md5($_REQUEST["password"])."' ";
+		$sql = "Select IFNULL(COUNT(userId),0) as userexist , id, userId from user where email = '".$_REQUEST["email"]."' and password = '".md5($_REQUEST["password"])."' ";
 
 		$row = mysql_fetch_array(db_execute_return($sql));
 
@@ -27,11 +27,15 @@ if(isset($_REQUEST["email"]) && isset($_REQUEST["password"]) && $_REQUEST["type"
 			$userExist = true;
 			SetData($key,$userExist);
 			 
-			$userData = getUserDetail($row["id"]);
+			 $userData = getUserDetail($row["id"]);
 			 $_SESSION['s_user_id'] = $row["id"];
+ 
+			 $_SESSION['userId'] = $row["userId"];
+			 
 			 $_SESSION['s_user_name'] = $userData["name"];
 			 $_SESSION['s_user_email'] = $userData["email"];
-			 
+			 $_SESSION['type'] = 'web';
+			 $_SESSION['pic'] =  $userData["pic_path"];
 			$userData['status'] = 'success';
 			
 			//Convert User Data into Json
@@ -62,7 +66,8 @@ if(isset($_REQUEST["email"]) && isset($_REQUEST["password"]) && isset($_REQUEST[
 			 $_SESSION['s_user_id'] = $row["id"];
 			 $_SESSION['s_user_name'] = $_REQUEST["name"];
 			 $_SESSION['s_user_email'] = $_REQUEST["email"];
-			 
+			 $_SESSION['userId'] = $row["userId"];
+				$_SESSION['pic'] =  $row["pic_path"];
 			$row['status'] = 'success';
 			
 			//Convert User Data into Json
@@ -87,6 +92,40 @@ if(isset($_REQUEST["email"]) && isset($_REQUEST["password"]) && isset($_REQUEST[
 			
 		}
 }
+if(isset($_REQUEST["email"]) && $_REQUEST["type"] == 'google' &&
+	isset($_REQUEST["id"]) && isset($_REQUEST["name"]) && isset($_REQUEST["pic"])){
+
+	//Check if user exist in database/memcache or not
+	$userExist = userExist($_REQUEST["id"]);
+	
+	//If user exist than get their details from database or memcache
+	if($userExist==true)
+	{
+ 		//Get user details from database/memcache
+		$userData = getUserDetails($_REQUEST["id"]);
+		$userData['first_time'] = 0;
+	}else{
+
+		$userData = createNewGoogleUser($_REQUEST["id"],$_REQUEST["email"],$_REQUEST["name"],$_REQUEST["pic"]);
+
+	}
+	 $_SESSION['s_user_id'] = $userData["id"];
+	 $_SESSION['s_user_name'] = $_REQUEST["name"];
+	 $_SESSION['s_user_email'] = $_REQUEST["email"];
+	 $_SESSION['userId'] = $_REQUEST["id"];
+	 $userData['status'] = 'success';
+	 $_SESSION['type'] = 'google';
+
+	 $_SESSION['pic'] = $_REQUEST["pic"];
+
+	//Convert User Data into Json
+	$data = json_encode($userData);
+	
+	//Return User Data
+	echo $data;
+
+}
+
 if(isset($_REQUEST["email"]) && $_REQUEST["type"] == 'reset'  )
 {
 		$sql = "Select IFNULL(COUNT(id),0) as userexist , id , type from user where email = '".$_REQUEST["email"]."'  ";
@@ -163,8 +202,11 @@ if(isset($_REQUEST["userId"]) && isset($_REQUEST["accessToken"]))
 	
 	 $_SESSION['s_user_id'] = $userData["id"];
 	 $_SESSION['s_user_name'] = $userData["name"];
+	 $_SESSION['type'] = 'facebook';
 	 $_SESSION['s_user_email'] = $userData["email"];
-	 
+	 $_SESSION['userId'] = $_REQUEST["userId"];
+	 $_SESSION['pic'] = '//graph.facebook.com/'.$_REQUEST["userId"].'/picture?width=50&amp;height=50';
+
 	$userData['status'] = 'success';
 	
 	//Convert User Data into Json
@@ -180,14 +222,12 @@ if(isset($_REQUEST["userId"]) && isset($_REQUEST["accessToken"]))
 function userExist($userId)
 {
 	//Memcache Key
-	$key = "userExist".$userId;
-	SetData($key,false);
-	
-	$data = GetData($key);
+	$data =  false; 
 	
 	if($data==false)
 	{
 		$sql = "Select IFNULL(COUNT(userId),0) as userexist from user where userId = ".$userId;
+	
 		$row = mysql_fetch_array(db_execute_return($sql));
 		if($row["userexist"]<1)
 		{
@@ -196,8 +236,7 @@ function userExist($userId)
 		else
 		{
 			$userExist = true;
-			SetData($key,$userExist);
-		}
+ 		}
 	}else
 	{
 		$userExist = true;
@@ -225,7 +264,7 @@ function getUserDetails($userId)
 {
 	$key = "USER".$userId;
 	SetData($key, false);
-	$data = GetData($key);
+	$data = false; //GetData($key);
 	
 	if($data==false)
 	{
@@ -242,14 +281,38 @@ function getUserDetail($id)
 	
 	if($data==false)
 	{
-		$sql = "Select * from user where id = ".$userId;
+		$sql = "Select * from user where id = ".$id;
 		$data = mysql_fetch_array(db_execute_return($sql));
 		SetData($key, $data);
 	}
 	
 	return $data;
 }
+function createNewGoogleUser($id, $email, $name, $pic_path){
+ 
+	$array = array();
+	if ($id>0 && $id!='0')
+	{
+ 	
+	//Save data in database
+	$date = date("Y-m-d H:i:s");
 
+	$sql = "INSERT INTO `user` (`id`,`userId`, `name`, `email`, `type`,`password`,
+	 `currentLocation`, `gender`,`pic_path`, `joinDate`) VALUES (NULL,'".$id."', 
+	 '".addslashes($name)."', '".$email."', 'google','', '', 'Male', '".$pic_path."' , '".$date."' );";
+
+
+	db_execute($sql);
+	
+	$sql = "Select * from user where email = '".$email."' and `userId` = ".$id;
+	$data = mysql_fetch_array(db_execute_return($sql));
+ 
+	 
+	}
+	
+	//return data
+	return $data;
+}
 //Create New User In database
 function createNewUser($user,$userId)
 {
@@ -257,28 +320,21 @@ function createNewUser($user,$userId)
 	$array = array();
 	if ($userId>0 && $user->id!='0')
 	{
-	$key = "USER".$userId;
-	
+ 	
 	//Save data in database
 	$date = date("Y-m-d H:i:s");
 	$sql = "INSERT INTO `user` (`id`,`userId`, `name`, `email`, `type`,`password`, `currentLocation`, `gender`, `joinDate`) VALUES (NULL,'".$user->id."', '".addslashes($user->name)."', '".$user->email."', 'facebook','', '".$user->location->name."', '".$user->gender."', '".$date."');";
 	db_execute($sql);
 	
-	//Create Array
-	$array["userId"]=$user->id;
-	$array["name"]=addslashes($user->name);
-	$array["email"]=$user->email;
-	$array["currentLocation"]=$user->hometown->name;
-	$array["gender"]=$user->gender;
-	$array["joinDate"]=$date;
-	
+	$sql = "Select * from user where email = '".$user->email."' and `userId` = ".$user->id;
+	$data = mysql_fetch_array(db_execute_return($sql));
 	//Save data in cache
 	//SetData($key,$array);
 	
 	}
 	
 	//return data
-	return $array;
+	return $data;
 }
 //Calculate Age
 function calculateAge($birthday){

@@ -1,3 +1,4 @@
+<?php include('api/config.php');  ?>
 <!DOCTYPE html>
 <html>
 <hcssead>
@@ -15,73 +16,16 @@
 
     <link rel="stylesheet" href="css/jarvis-theme-2.css">
 <link rel="stylesheet" href="css/common.css">
+        <?php include('inc/js.php'); ?>
 
 
     </head>
 
     <body>
         <!-- Static navbar -->
-        <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
-            <div class="container"><a class="badge-evt navbar-brand" data-evt="SiteAction,Navigation,SiteLogoClicked" href="http://9gag.tv">9GAG.tv</a>
-                <ul class="badge-account-me hide nav-account nav navbar-nav navbar-right">
-                    <li class="dropdown keepstyle"><a href="javascript:void(0);" class="badge-evt dropdown-toggle" data-evt="UserAction,UserMenu,Toggle" data-toggle="dropdown"><i class="caret"></i><div class="img-container"><img class="badge-account-avatar" width="34" height="34" src="" /></div><!-- / img-container --></a>
-                        <ul class="dropdown-menu">
-                            <li><a class="badge-evt" data-evt="UserAction,Settings,Clicked" href="http://9gag.tv/account/settings">Settings</a>
-                            </li>
-                            <li><a class="badge-evt badge-account-logout" data-evt="UserAction,Logout,Clicked" href="http://accounts.9gag.com/account/logout?continue=http%3A%2F%2F9gag.tv%2Faccount%2Fauthenticate-callback%3Fnext%3Dhttp%3A%2F%2F9gag.tv%2Fp%2FaKGeX3%2Frainbow-and-nutella-valentine-day-gift-for-you&amp;app_key=a_49bbbcf3f844aa9481265cb2a86d9b8a1de586" onclick="app.views.userStatus.clearLocalStorage();" rel="nofollow">Logout</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="badge-user-functions">
-                    <li id="jsid-notification-toggle" class="dropdown"><a class="badge-account-login badge-evt btn btn-primary navbar-btn pull-right visitor-signin-btn hide" data-evt="UserAction,Login,Clicked" href="http://accounts.9gag.com/account/authenticate?continue=http%3A%2F%2F9gag.tv%2Faccount%2Fauthenticate-callback%3Fnext%3Dhttp%3A%2F%2F9gag.tv%2Fp%2FaKGeX3%2Frainbow-and-nutella-valentine-day-gift-for-you&amp;app_key=a_49bbbcf3f844aa9481265cb2a86d9b8a1de586" rel="nofollow">Sign in with 9GAG</a><a class="badge-evt notification-btn dropdown-toggle badge-notification-btn hide" href="javascript:void(0);" data-evt="UserAction,UserMenu,Toggle" data-toggle="dropdown"><i class="fa fa-bell fa-lg"></i><span id="jsid-notification-unread-count" class="badge hide">0</span></a><a class="badge-upload-btn upload-btn badge-evt hide" data-evt="SiteAction,Navigation,SubmitVideoClicked" href="http://9gag.tv/account/post/create/video"><i class="fa fa-plus fa-lg"></i></a>
-                        <div id="jsid-header-notification-items" class="notification-menu hide">
-                            <div class="title">
-                                <h3>Activities</h3><a class="close-btn visible-xs" href="javascript:void(0);"><i class="fa fa-times fa-lg"></i></a>
-                            </div>
-                            <div class="scrollbar">
-                                <div class="track">
-                                    <div class="thumb"></div>
-                                </div>
-                            </div>
-                            <div class="notification-list viewport">
-                                <ul id="jsid-header-notification-items-container" class="overview">
-                                    <li class="empty">
-                                        <div class="empty-message">
-                                            <p>Loading notifications...</p>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="bumper hide"><a id="jsid-header-notification-see-all" class="see-all" href="javascript:void(0);">See all</a>
-                            </div>
-                        </div>
-                        <!--end .notification-menu-->
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <div class="channel-bar">
-            <div class="container">
-                <ul class="nav nav-tabs channel">
-                    <li><a data-evt="SiteAction,ChannelBar,Home-Clicked" href="http://9gag.tv">Home</a>
-                    </li>
-                    <li class=""><a class="badge-evt" data-evt="SiteAction,ChannelBar,game-Clicked" href="/channel/game">Game</a>
-                    </li>
-                    <li class=""><a class="badge-evt" data-evt="SiteAction,ChannelBar,prank-Clicked" href="/channel/prank">Fail &amp; Prank</a>
-                    </li>
-                    <li class=""><a class="badge-evt" data-evt="SiteAction,ChannelBar,cute-Clicked" href="/channel/cute">Cute</a>
-                    </li>
-                    <li class=""><a class="badge-evt" data-evt="SiteAction,ChannelBar,music-Clicked" href="/channel/music">Music</a>
-                    </li>
-                    <li class=""><a class="badge-evt" data-evt="SiteAction,ChannelBar,movie-and-tv-Clicked" href="/channel/movie-and-tv">Movie &amp; TV</a>
-                    </li>
-                    <li class=""><a class="badge-evt" data-evt="SiteAction,ChannelBar,nsfw-Clicked" href="/channel/nsfw">NSFW</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- / container -->
-        </div>
+        <?php include('inc/header.php'); ?>
+
+        <?php include('inc/channel.php'); ?>
         <div class="badge-post-main-container post-grid" data-hashed-id="aKGeX3" data-index-key="LJEGX"></div>
         <div class="stage">
             <div class="container">

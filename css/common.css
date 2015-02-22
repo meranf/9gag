@@ -31,6 +31,46 @@
     }
 }
 
+@-webkit-keyframes rotating {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -webkit-transform: translate3d(0, 0, 0) rotate(0deg);
+    -moz-transform: translate3d(0, 0, 0) rotate(0deg);
+    -ms-transform: translate3d(0, 0, 0) rotate(0deg);
+    -o-transform: translate3d(0, 0, 0) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0) rotate(360deg);
+    -moz-transform: translate3d(0, 0, 0) rotate(360deg);
+    -ms-transform: translate3d(0, 0, 0) rotate(360deg);
+    -o-transform: translate3d(0, 0, 0) rotate(360deg);
+    transform: translate3d(0, 0, 0) rotate(360deg);
+  }
+}
+.rotating {
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+}
+
+}
 /* CSS */
 
 /* CSS */
@@ -423,9 +463,7 @@ display:none;
 .fb_dialog.fb_dialog_mobile.loading iframe,.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon {
 visibility:hidden;
 }
-.rotating {
-    animation: 2s linear 0s normal none infinite running rotating;
-}
+
 .spinner {
     background: url("../images/spinner.png") no-repeat scroll 0 0 / 25px 25px rgba(0, 0, 0, 0);
     display: none;
@@ -436,4 +474,7 @@ visibility:hidden;
     right: 0;
     top: 17px;
     width: 25px;
+}
+.rotating {
+    animation: 2s linear 0s normal none infinite running rotating;
 }

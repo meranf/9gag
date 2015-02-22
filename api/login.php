@@ -125,10 +125,34 @@ if(isset($_REQUEST["email"]) && $_REQUEST["type"] == 'google' &&
 	echo $data;
 
 }
+if(isset($_REQUEST["password"]) && isset($_REQUEST["code"]) && $_REQUEST["type"] == 'changepassword' )
+{
+
+		$sql = "Select IFNULL(COUNT(id),0) as userexist , id ,name from user where resetcode = '".$_REQUEST["code"]."'  ";
+ 
+		$row = mysql_fetch_array(db_execute_return($sql));
+
+		$userData['status'] = 'error';
+		$userData['msg'] = 'code is expired';
+
+		if($row["userexist"] > 0){
+		 
+				db_execute('update user set password = "'.md5($_REQUEST["password"]).'" where resetcode = "'.$_REQUEST['code'].'" ');
+				db_execute('update user set resetcode = "" where resetcode = "'.$_REQUEST['code'].'" ');
+
+				$userData['status'] = 'success';
+				$userData['msg'] = 'Password has been updated successfully';
+ 		}
+		$data = json_encode($userData);
+	
+		//Return User Data
+		echo $data;
+
+}
 
 if(isset($_REQUEST["email"]) && $_REQUEST["type"] == 'reset'  )
 {
-		$sql = "Select IFNULL(COUNT(id),0) as userexist , id , type from user where email = '".$_REQUEST["email"]."'  ";
+		$sql = "Select IFNULL(COUNT(id),0) as userexist , id ,name , type from user where email = '".$_REQUEST["email"]."'  ";
 
 		$row = mysql_fetch_array(db_execute_return($sql));
 
@@ -156,6 +180,30 @@ if(isset($_REQUEST["email"]) && $_REQUEST["type"] == 'reset'  )
 
 			if($row['type'] == 'web'){
 			// send email to user
+				$code = generateRandomString(10);
+
+				$from = "support@9gag.com";
+
+				$headers = "MIME-Version: 1.0\n";
+				$headers .= "Content-type: text/html; charset=utf-8\n";
+				$headers .= "X-Priority: 3\n";
+				$headers .= "X-MSMail-Priority: Normal\n";
+				$headers .= "X-Mailer: php\n";
+				$headers .= "From: \"9gag\" <support@9gag.com>\n";
+				$headers .= "Return-Path: support@9gag.com\n";
+				$headers .= "Return-Receipt-To: support@9gagraag.com\n";
+ 				$link = WEBSITE_URL.'reset.php?code='.$code;
+ 				$message = 'Dear '.ucfirst(strtolower($row['name']));
+				$message = '<br><br>We have received your request to reset your password, please follow the following URL.';
+				$message .= '<br><br><a href="'.$link.'" target="_blank"> click here </a>.<br><br> Regards,<br><br> 9gag Team';
+
+
+ 				$subject = 'Reset Password Request';
+
+ 				Email($_REQUEST["email"], $subject, $message, $headers);
+
+				db_execute('update user set resetcode = "'.$code.'" where id = "'.$row['id'].'" ');
+
 				$userData['status'] = 'success';
 				$userData['msg'] = 'An email has been sent to your email address with password';
 			
@@ -216,7 +264,23 @@ if(isset($_REQUEST["userId"]) && isset($_REQUEST["accessToken"]))
 	echo $data;
 }
 
+ function Email($email, $subject, $message, $headers)
+	{ 
+					
+					mail($email,$subject, $message, $headers);
+	}
+
 /* Required Functions */
+
+function generateRandomString($length) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
 
 //Check user exist in database or not
 function userExist($userId)
@@ -301,7 +365,7 @@ function createNewGoogleUser($id, $email, $name, $pic_path){
 	 `currentLocation`, `gender`,`pic_path`, `joinDate`) VALUES (NULL,'".$id."', 
 	 '".addslashes($name)."', '".$email."', 'google','', '', 'Male', '".$pic_path."' , '".$date."' );";
 
-
+ 
 	db_execute($sql);
 	
 	$sql = "Select * from user where email = '".$email."' and `userId` = ".$id;

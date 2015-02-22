@@ -1,4 +1,86 @@
 <?php include('api/config.php');  ?>
+<?php 
+if(isset($_SESSION['s_user_id']) && $_SESSION['s_user_id'] > 0 ){
+  header('location: index.php')  ;
+}
+ ?>
+ <?php
+$google_client_id       = '990345411252-pag1pl3u2l67nf6le9s079i7ocghadvb.apps.googleusercontent.com';
+$google_client_secret   = 'Sbea8brt5DVziM74B2DZkG1T';
+$google_redirect_url    = 'http://vegatechnologies.net/9gag/callback.php'; //path to your script
+$google_developer_key   = 'AIzaSyDtFMH6Q6kjnlNLAy6YR2zettSo0Gv4g3A';
+
+########## MySql details (Replace with yours) #############
+// $db_username = "xxxxxxxxx"; //Database Username
+// $db_password = "xxxxxxxxx"; //Database Password
+// $hostname = "localhost"; //Mysql Hostname
+// $db_name = 'xxxxxxxxx'; //Database Name
+###################################################################
+
+//include google api files
+require_once 'src/Google_Client.php';
+require_once 'src/contrib/Google_Oauth2Service.php';
+
+//start session
+session_start();
+
+$gClient = new Google_Client();
+$gClient->setApplicationName('9gag');
+$gClient->setClientId($google_client_id);
+$gClient->setClientSecret($google_client_secret);
+$gClient->setRedirectUri($google_redirect_url);
+$gClient->setDeveloperKey($google_developer_key);
+
+$google_oauthV2 = new Google_Oauth2Service($gClient);
+
+//If user wish to log out, we just unset Session variable
+if (isset($_REQUEST['reset'])) 
+{
+  unset($_SESSION['token']);
+  $gClient->revokeToken();
+  header('Location: ' . filter_var($google_redirect_url, FILTER_SANITIZE_URL)); //redirect user back to page
+}
+
+//If code is empty, redirect user to google authentication page for code.
+//Code is required to aquire Access Token from google
+//Once we have access token, assign token to session variable
+//and we can redirect user back to page and login.
+if (isset($_GET['code'])) 
+{ 
+    $gClient->authenticate($_GET['code']);
+    $_SESSION['token'] = $gClient->getAccessToken();
+    header('Location: ' . filter_var($google_redirect_url, FILTER_SANITIZE_URL));
+    return;
+}
+
+
+if (isset($_SESSION['token'])) 
+{ 
+    $gClient->setAccessToken($_SESSION['token']);
+}
+
+
+if ($gClient->getAccessToken()) 
+{
+      //For logged in user, get details from google using access token
+      $user                 = $google_oauthV2->userinfo->get();
+      $user_id              = $user['id'];
+      $user_name            = filter_var($user['name'], FILTER_SANITIZE_SPECIAL_CHARS);
+      $email                = filter_var($user['email'], FILTER_SANITIZE_EMAIL);
+      $profile_url          = filter_var($user['link'], FILTER_VALIDATE_URL);
+      $profile_image_url    = filter_var($user['picture'], FILTER_VALIDATE_URL);
+      $personMarkup         = "$email<div><img src='$profile_image_url?sz=50'></div>";
+      $_SESSION['token']    = $gClient->getAccessToken();
+}
+else 
+{
+    //For Guest user, get google login url
+    $authUrl = $gClient->createAuthUrl();
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -52,20 +134,20 @@
                 <form class="form be-signuplogin" method="post">
                     <div class="form-group">
                         <p class="help-block text-center">Connect with a social network</p>
-                        <span style="color:red; display:none" id="error-login" >Login not found.</span>
-
+ <div class="alert alert-danger" id="error-login" style="display:none">
+                                Some Thing Wong!
+                            </div>
                         <div class="row gutter-10 social-btn">
                             <div class="col-sm-2"></div>
 
                             <div class="col-sm-4">
-                                <a class=
-                                "badge-connect-facebook btn btn-block btn-social btn-lg btn-facebook"
+                                <a class="badge-connect-facebook btn btn-block btn-social btn-lg btn-facebook fbconnectbtn"
                                 href="javascript:void(0);"><i class=
                                 "fa fa-facebook"></i> Facebook</a>
                             </div>
 
                             <div class="col-sm-4">
-                                <span class=
+                                <span onclick="googleDialog('<?php echo $authUrl;?>');"  class=
                                 "badge-connect-gplus btn btn-block btn-social btn-lg btn-google-plus"
                                 data-gapiattached="true" id=
                                 "gplus_396780"><i class=
@@ -104,10 +186,10 @@
                     <div class="form-group">
                         
                         <div class="btn-container">
-                            <a class=
-                            "badge-btn-submit btn btn-lg btn-primary btn-default btn-block signup_user"
-                            href="javascript:void(0);">Create</a>
+                            <a class="badge-btn-submit btn btn-lg btn-primary btn-default btn-block signup_user"                            href="javascript:void(0);">Create 
+                             <div id="login-spinner" class="spinner  rotating " style="margin: -21px auto 0px;"></div></a>
                         </div><!-- / btn-container -->
+                       
                     </div>
                 </form><!-- / col-md-6 -->
             </div><!-- / row -->

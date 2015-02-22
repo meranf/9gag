@@ -26,124 +26,46 @@
 
 <?php include('inc/channel.php'); ?>
 
- 
-
     <div class="post-list-t1 cover">
         <div class="badge-post-grid-container row no-gutter" data-grid-key=
         "Landing-Headline">
-            <div class="badge-grid-item badge-post-item-aKqLLy" data-hashed-id=
-            "aKqLLy">
+            <?php 
+             $query = db_execute_return("select * from video order by `like` desc limit 5");
+             
+             while($value = mysql_fetch_array($query)){
+
+            
+                $thumb_image = $value['thmbnail'];
+
+              
+
+
+              ?>
+                    
+              <div class="badge-grid-item badge-post-item-aKqLLy" data-hashed-id="<?php echo $id; ?>">
                 <div class="col-md-3">
                     <div class="item">
                         <a class="img-container" data-ga-label="ImageClicked"
-                        href="">
+                        href="<?php echo WEBSITE_URL; ?>inner.php?id=<?php echo $value['id']; ?>">
                         <div class="responsivewrapper" style=
-                        "background-image: url(images/logo.jpg)">
+                        "background-image: url('<?php echo $thumb_image; ?>')">
                         </div>
 
                         <div class="img-shadow"></div></a>
 
                         <div class="info">
-                            <a class="title" data-ga-label="TitleClicked" href=
-                            "">
-                            <h4> Its Time For
-                            Valentine's Day (NSFW)</h4></a>
+                            <a class="title" data-ga-label="" href="<?php echo WEBSITE_URL; ?>inner.php?id=<?php echo $value['id']; ?>">
+                            <h4> <?php echo $value['title'] ?> </h4></a>
                         </div>
                     </div><!-- / item -->
                 </div>
             </div>
 
-            <div class="badge-grid-item badge-post-item-aKk66D" data-hashed-id=
-            "aKk66D">
-                <div class="col-md-3">
-                    <div class="item">
-                        <a class="img-container" data-ga-label="ImageClicked"
-                        href=
-                        "">
-                        <div class="responsivewrapper" style=
-                        "background-image: url(images/logo.jpg)">
-                        </div>
+            
 
-                        <div class="img-shadow"></div></a>
+             <?php }     ?>
 
-                        <div class="info">
-                            <a class="title" data-ga-label="TitleClicked" href=
-                            "">
-                            <h4>This Material Is The Worlds First Mouldable
-                            Glue That Turns Into Rubber</h4></a>
-                        </div>
-                    </div><!-- / item -->
-                </div>
-            </div>
 
-            <div class="badge-grid-item badge-post-item-a9ZddX" data-hashed-id=
-            "a9ZddX">
-                <div class="col-md-3">
-                    <div class="item">
-                        <a class="img-container" data-ga-label="ImageClicked"
-                        href=
-                        "">
-                        <div class="responsivewrapper" style=
-                        "background-image: url(images/logo.jpg)">
-                        </div>
-
-                        <div class="img-shadow"></div></a>
-
-                        <div class="info">
-                            <a class="title" data-ga-label="TitleClicked" href=
-                            "">
-                            <h4>Tiny Hamster's Tiny Date Will Make You
-                            Jealous</h4></a>
-                        </div>
-                    </div><!-- / item -->
-                </div>
-            </div>
-
-            <div class="badge-grid-item badge-post-item-a5R1gQ" data-hashed-id=
-            "a5R1gQ">
-                <div class="col-md-3">
-                    <div class="item">
-                        <a class="img-container" data-ga-label="ImageClicked"
-                        href=
-                        "">
-                        <div class="responsivewrapper" style=
-                        "background-image: url(images/logo.jpg)">
-                        </div>
-
-                        <div class="img-shadow"></div></a>
-
-                        <div class="info">
-                            <a class="title" data-ga-label="TitleClicked" href=
-                            "">
-                            <h4>Ten Second Songs Is Back With A Valentine's Day
-                            Special</h4></a>
-                        </div>
-                    </div><!-- / item -->
-                </div>
-            </div>
-
-            <div class="badge-grid-item badge-post-item-a9pWBE" data-hashed-id=
-            "a9pWBE">
-                <div class="col-md-3">
-                    <div class="item">
-                        <a class="img-container"
-                        href=
-                        "">
-                        <div class="responsivewrapper" style=
-                        "background-image: url(images/logo.jpg)">
-                        </div>
-
-                        <div class="img-shadow"></div></a>
-
-                        <div class="info">
-                            <a class="title" data-ga-label="TitleClicked" href=
-                            "">
-                            <h4>This New Kind Of "Dribble Dance" Will Make You
-                            Speechless (NSFW)</h4></a>
-                        </div>
-                    </div><!-- / item -->
-                </div>
-            </div>
         </div>
     </div>
 
@@ -206,38 +128,32 @@
                         </div>
 
                         <div class="post-list-t1">
-                            <div class="badge-post-grid-container" data-grid-key="Landing-TwoColumn-Right">
-                               <div class="badge-grid-item badge-post-item-aK1ypA" data-hashed-id="aK1ypA">
-                                    <div class="item clearfix r-17-7">
-                                        <a class="img-container" data-ga-label="ImageClicked" href="">
-                                        <div class="responsivewrapper" style="background: url(images/cover.jpg) center; background-size: cover;">
-                                        </div></a>
+                            <div class="badge-post-grid-container" data-grid-key="PostPage-RandomPostsGrid">
+                                <div class="badge-grid-item badge-post-item-aKWdPe" data-hashed-id="aKWdPe">
+                                   
+                            <?php 
+                             $query = db_execute_return("select * from video order by `like` desc limit 5");
+                             
+                             while($value = mysql_fetch_array($query)){
 
+                                $thumb_image = $value['thmbnail'];
+                                ?>
+                                    <div class="item clearfix r-17-7">
+                                        <a class="img-container" href="<?php echo WEBSITE_URL.'inner.php?id='.$value['id']; ?>">
+                                            <div class="responsivewrapper" style="background: url(<?php echo $thumb_image; ?>) center; background-size: cover;"></div>
+                                        </a>
                                         <div class="info">
-                                            <a class="title" data-ga-label="TitleClicked" href="">
-                                            <h4>Severus Snape's Most Important
-                                            Scenes In "Harry Potter" In
-                                            Chronological Order
-                                            <small>14:16</small></h4></a>
+                                            <a class="title" href="<?php echo WEBSITE_URL.'inner.php?id='.$value['id']; ?>">
+                                                <h4> <?php echo $value['title']; ?></h4>
+                                            </a>
                                         </div>
                                     </div>
-                                </div>
-  <div class="badge-grid-item badge-post-item-aK1ypA" data-hashed-id="aK1ypA">
-                                    <div class="item clearfix r-17-7">
-                                        <a class="img-container" data-ga-label="ImageClicked" href="">
-                                        <div class="responsivewrapper" style="background: url(images/cover.jpg) center; background-size: cover;">
-                                        </div></a>
+                            <?php } ?>
 
-                                        <div class="info">
-                                            <a class="title" data-ga-label="TitleClicked" href="">
-                                            <h4>Severus Snape's Most Important
-                                            Scenes In "Harry Potter" In
-                                            Chronological Order
-                                            <small>14:16</small></h4></a>
-                                        </div>
-                                    </div>
+
                                 </div>
-                            </div><!-- / post-list-t1 -->
+                            </div>
+                        </div>
                         </div>
                     </div><!-- / sidebar -->
                 </div><!-- / col-md-4 -->

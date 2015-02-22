@@ -204,6 +204,76 @@ function gmailLogin(id,email, user_name, pic_path) {
 
 		  }, "json" );
 }
+	$.ChangePassWord = function(){
+
+		$('#error-login').html('').hide();
+
+		var errors = [];
+		var password = $('#password');
+		var cpassword = $('#cpassword');
+ 		var code = $('#code');
+
+		if($.trim(password.val()) == ''){
+			password.parent().addClass('has-error');
+			errors.push('Please enter email address.');
+		}else{
+			password.parent().removeClass('has-error');
+		}
+		if($.trim(cpassword.val()) == ''){
+			cpassword.parent().addClass('has-error');
+			errors.push('Please enter email address.');
+		}else{
+			cpassword.parent().removeClass('has-error');
+		}
+		if($.trim(cpassword.val()).length < 6 ){
+			cpassword.parent().addClass('has-error');
+			$('#error-login').removeClass('alert-danger').addClass('alert-success').html('Password must be 6 characters long').fadeIn();
+			errors.push('Please enter email address.');
+		} 
+		if($.trim(cpassword.val()) !=  $.trim(password.val())  ){
+			cpassword.parent().addClass('has-error');
+			$('#error-login').removeClass('alert-danger').addClass('alert-success').html('New password must match with confirm password').fadeIn();
+			errors.push('Please enter email address.');
+		} 
+ 
+		if(errors.length < 1){
+ 
+			$('#login-spinner').show();
+
+			var jsonData = {password:$.trim(password.val()),
+							code : $.trim(code.val()),
+							'type': 'changepassword'};
+			
+			var request = $.ajax({
+				
+				url: canvas_url+'api/login.php',
+				data: jsonData,
+				type: 'POST',
+				dataType:'json'
+			});
+			
+			request.done(function(data){
+ 
+				$('#login-spinner').hide();
+				if(data.status == 'success'){
+
+					$('#error-login').removeClass('alert-danger').addClass('alert-success').html(data.msg).removeClass('alert-danger').fadeIn().delay(4000).fadeOut('fast',function(){
+						window.location = canvas_url+'signin.php';
+					});
+
+				}else{
+					
+					$('#error-login').addClass('alert-danger').removeClass('alert-success').html(data.msg).addClass('alert-danger').show();
+				}
+				
+
+			});
+			request.fail(function(jqXHR, textStatus){
+				 
+				
+			});
+		}
+	};
 
 	$.ResetPassword = function(){
 
@@ -239,13 +309,13 @@ function gmailLogin(id,email, user_name, pic_path) {
 				$('#login-spinner').hide();
 				if(data.status == 'success'){
 
-					$('#error-login').css('color', 'green').html(data.msg).removeClass('alert-danger').fadeIn().delay(4000).fadeOut('fast',function(){
+					$('#error-login').removeClass('alert-danger').addClass('alert-success').html(data.msg).removeClass('alert-danger').fadeIn().delay(4000).fadeOut('fast',function(){
 						window.location = canvas_url+'signin.php';
 					});
 
 				}else{
 					
-					$('#error-login').html(data.msg).addClass('alert-danger').show();
+					$('#error-login').addClass('alert-danger').removeClass('alert-success').html(data.msg).addClass('alert-danger').show();
 				}
 				
 
@@ -382,17 +452,19 @@ function gmailLogin(id,email, user_name, pic_path) {
 
 		var errors = [];
 		var vide_url = $('#vide_url');
+			var video_id = $('#video_id');
 		var title = $('#title');
+		var user_id = $('#user_id').val();
 		var description = $('#description');
-		var category = $('input[name="form-channel-url"]:checked').val();
- 
-
-		if($.trim(vide_url.val()) == ''){
+		var category_id = $('input[name="category_id"]:checked').val();
+  
+  		if($.trim(vide_url.val()) == ''){
 			vide_url.parent().addClass('has-error');
-			errors.push('Please enter email address.');
+			errors.push('Please enter password.');
 		}else{
 			vide_url.parent().removeClass('has-error');
 		}
+
 
 		if($.trim(title.val()) == ''){
 			title.parent().addClass('has-error');
@@ -410,13 +482,16 @@ function gmailLogin(id,email, user_name, pic_path) {
 		if(errors.length < 1){
  
 			$('#login-spinner').show();
-			var jsonData = {email:$.trim(email.val()),
-							password:password.val(),
-							'type': 'login'};
+			var jsonData = {title:$.trim(title.val()),
+							description:$.trim(description.val()),
+							link:$.trim(vide_url.val()),
+							category_id:category_id,
+							video_id:$("#video_id").val(),
+							user_id:user_id};
 			
 			var request = $.ajax({
 				
-				url: canvas_url+'api/login.php',
+				url: canvas_url+'api/video.php',
 				data: jsonData,
 				type: 'POST',
 				dataType:'json'
@@ -426,10 +501,13 @@ function gmailLogin(id,email, user_name, pic_path) {
  
 				$('#login-spinner').hide();
 				if(data.status == 'success'){
+					$("#error-video").removeClass('alert-danger').addClass('alert-success').html('Your Video has been submitted sucessfully, you can view you video once admin will approve it.').fadeIn().delay(3000).fadeOut('fast',function(){
 
-					window.location = canvas_url+'index.php';
+						window.location = canvas_url+'index.php';	
+					});
+					//
 				}else{
-					$('#error-login').html('Incorrect email or password').addClass('alert-danger').show();
+					$('#error-video').removeClass('alert-success').addClass('alert-danger').html('Incorrect email or password').addClass('alert-danger').fadeIn();
 				}
 				
 
@@ -462,8 +540,8 @@ function gmailLogin(id,email, user_name, pic_path) {
 
 function parseVideo(url) {
 
-    url.match(/(http:|https:|)\/\/(player.|www.)?(dailymotion\.com|vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(\&\S+)?/);
-    var type = '';
+    url.match(/(http:|https:|)\/\/(player.|www.)?(dailymotion\.com|vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(channels\/staffpicks\/|video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(\&\S+)?/);
+    var type = '';																								 
     var video_id = '';
     if (RegExp.$3.indexOf('youtu') > -1) {
         type = 'youtube';
@@ -480,26 +558,38 @@ function parseVideo(url) {
         video_id = video_id.split('_');
         video_id = video_id[0];
     }
-
+    $("#video_id").val(video_id);
     return {
         provider: type,
         id: video_id 
     };
 }
-
+/*<iframe src="//player.vimeo.com/video/59859181?color=1f3340&title=0&byline=0&portrait=0" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/59859181">High Maintenance / / Dinah</a> from <a href="https://vimeo.com/highmaintenance">Janky Clown Productions</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+*/ 
 $(function(){
 	$("#vide_url").bind('chage, blur', function(){
+
 		var url = $("#vide_url");
 
+		if($.trim(url.val()) != ''){
+
 		videoData = parseVideo($.trim(url.val()));
-		console.log(videoData);
-		if (videoData.id == '' || videoData.provider == '') {
+ 		if (videoData.id == '' || videoData.provider == '') {
  				url.parent().addClass('has-error');
-				$('#error-video').html('Only vimeo and dailymotion, vimeo and youtube url\'s are allowed.').removeClass('hide');
+				$('#error-video').html('Only dailymotion, vimeo and youtube url\'s are allowed.').fadeIn();
 			} else{
+				$('#error-video').html('').hide();
 				url.parent().removeClass('has-error');
-				$('#error-video').addClass('hide');
+ 					if (videoData.provider == 'youtube') {
+					  url.val('http://www.youtube.com/embed/'+videoData.id);
+					} else if(videoData.provider == 'vimeo'){
+					  url.val('http://player.vimeo.com/video/'+videoData.id);
+					}else if (videoData.provider == 'dailymotion'){
+					  url.val('http://www.dailymotion.com/embed/video/'+videoData.id);
+					}
+
 			}
+		}
 	});
 
 	$(".invitefriends").click(function(){
@@ -533,6 +623,11 @@ $(function(){
 	$("#video_submit").click(function(){
 		$.SubmitVideo();
 	});
+$(".resetpass").click(function(){
+		$.ChangePassWord();
+	});
+	
+
 	//Facebook Connect
 	$(".login").click(function(){
 		$.login();

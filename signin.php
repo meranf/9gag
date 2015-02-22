@@ -1,4 +1,9 @@
 <?php include('api/config.php');  ?>
+<?php 
+if(isset($_SESSION['s_user_id']) && $_SESSION['s_user_id'] > 0 ){
+  header('location: index.php')  ;
+}
+ ?>
 <?php
 $google_client_id       = '990345411252-pag1pl3u2l67nf6le9s079i7ocghadvb.apps.googleusercontent.com';
 $google_client_secret   = 'Sbea8brt5DVziM74B2DZkG1T';
@@ -100,7 +105,7 @@ else
 <body>
 <div id="fb-root"></div>
 <div class="corner-signuplogin-switch" style="z-index:999">
-        <p>Not a member? <strong><a class="navbar-link" href="register.php">
+        <p>Not a member? <strong><a class="navbar-link" href="<?php echo WEBSITE_URL; ?>register.php">
         Sign up</a></strong></p>
     </div>
     
@@ -151,7 +156,10 @@ else
                     <p class="help-block text-center">
                         Sign in with your email address / username
                     </p>
-                    <span style="color:red; display:none" id="error-login" >Login not found.</span>
+                      <div class="alert alert-danger" id="error-login" style="display:none">
+                                Some Thing Wong!
+                            </div>
+
                 </div>
 
                 <div class="form-group">

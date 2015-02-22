@@ -1,4 +1,10 @@
 <?php include('api/config.php');  ?>
+<?php 
+if(!isset($_SESSION['s_user_id'])){
+  header('location: index.php')  ;
+/* echo '<script>window.location="'.WEBSITE_URL.'";<script>';
+*/}
+ ?>
 <!DOCTYPE html>
 <html>
 <hcssead>
@@ -43,9 +49,7 @@
             <div class="col-md-4 col-md-push-8 hidden-sm hidden-xs">
                 <div class="user-upload-preview">
                     <div class="responsivewrapper">
-                        <p class="">
-                            <iframe frameborder="0" autoplay="0" allowfullscreen="" src=""></iframe>
-                        </p>
+                       
                     </div>
                     <!-- responsivewrapper -->
                 </div>
@@ -56,11 +60,15 @@
                 <div class="user-upload-form">
                     <form class="form-user-upload">
                         <div class="form-group">
-                            <input type="hidden" value="3" class="form-control" id="jsid-form-type">
-                            <input type="url" placeholder="Paste Video Link..." class="form-control" id="vide_url">
-                            <div class="alert alert-danger hide" id="error-video">
-                                Some Ting Wong!
+                         <input type="hidden" value="" class="form-control" id="video_id">
+
+                            <input type="hidden" value="<?php echo $_SESSION['s_user_id']; ?>" class="form-control" id="user_id">
+                                <div class="alert alert-danger" id="error-video" style="display:none">
+                                Some Thing Wong!
                             </div>
+
+                            <input type="url" placeholder="Paste Video Link..." class="form-control" id="vide_url">
+                           
                             <!-- / alert -->
                         </div>
                         <!-- / form-group -->
@@ -76,25 +84,25 @@
                             <label>Channel:</label>
                             <p>
                                 <label class="radio-inline">
-                                    <input type="radio" checked="" value="default" name="form-channel-url" id="jsid-form-channel-url-default"> Default
+                                    <input type="radio" checked="" value="1" name="category_id" id="jsid-form-channel-url-default"> Default
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" value="prank" name="form-channel-url" id="jsid-form-channel-url-prank"> Fail &amp; Prank
+                                    <input type="radio" value="2" name="category_id" id="jsid-form-channel-url-prank"> Fail &amp; Prank
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" value="music" name="form-channel-url" id="jsid-form-channel-url-music"> Music
+                                    <input type="radio" value="3" name="category_id" id="jsid-form-channel-url-music"> Music
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" value="cute" name="form-channel-url" id="jsid-form-channel-url-cute"> Cute
+                                    <input type="radio" value="4" name="category_id" id="jsid-form-channel-url-cute"> Cute
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" value="nsfw" name="form-channel-url" id="jsid-form-channel-url-nsfw"> NSFW
+                                    <input type="radio" value="5" name="category_id" id="jsid-form-channel-url-nsfw"> NSFW
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" value="movie-and-tv" name="form-channel-url" id="jsid-form-channel-url-movie-and-tv"> Movie &amp; TV
+                                    <input type="radio" value="6" name="category_id" id="jsid-form-channel-url-movie-and-tv"> Movie &amp; TV
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" value="game" name="form-channel-url" id="jsid-form-channel-url-game"> Game
+                                    <input type="radio" value="7" name="category_id" id="jsid-form-channel-url-game"> Game
                                 </label>
                             </p>
                         </div>

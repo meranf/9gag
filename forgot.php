@@ -1,6 +1,10 @@
-
-
-            <!DOCTYPE html>
+<?php include('api/config.php'); ?>
+<?php 
+if(isset($_SESSION['s_user_id']) && $_SESSION['s_user_id'] > 0 ){
+  header('location: index.php')  ;
+}
+ ?>
+<!DOCTYPE html>
 <html>
 <head>
 
@@ -23,7 +27,7 @@
     </head>
 <body>
 <div class="corner-signuplogin-switch" style="z-index:999">
-        <p>Alerady a member? <strong><a class="navbar-link" href="register.php">
+        <p>Alerady a member? <strong><a class="navbar-link" href="<?php echo WEBSITE_URL; ?>register.php">
         Sign up</a></strong></p>
     </div>
     
@@ -37,7 +41,9 @@
     height: auto;
     margin-top: 50px;
     text-align: center;
+
 }
+
 </style>
 <div class="site-branding-container">
     <img src="images/logos.jpg">
@@ -55,8 +61,9 @@
                     <p class="help-block">
                         Forgot your password? Enter your email address to reset it.
                     </p>
-                <span style="color:red; display:none" id="error-login" >Login not found.</span>
-
+              <div class="alert alert-danger" id="error-login" style="display:none">
+                                Some Thing Wong!
+                            </div>
                 </div>
 
                 <div class="form-group">

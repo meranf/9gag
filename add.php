@@ -63,6 +63,10 @@ if(!isset($_SESSION['s_user_id'])){
                          <input type="hidden" value="" class="form-control" id="video_id">
 
                             <input type="hidden" value="<?php echo $_SESSION['s_user_id']; ?>" class="form-control" id="user_id">
+                            <input type="hidden" id="daily_motion_image" value="0" />
+                            <input type="hidden" id="daily_motion_duration" value="0" />
+                            
+                            
                                 <div class="alert alert-danger" id="error-video" style="display:none">
                                 Some Thing Wong!
                             </div>
@@ -108,6 +112,8 @@ if(!isset($_SESSION['s_user_id'])){
                         </div>
                         <!-- / form-group -->
                         <div class="btn-container"><a href="javascript:void(0);" class="btn btn-primary badge-evt" id="video_submit">Save</a>
+                                                    <img height="25" style="margin-left: 10px; display:none;" src="images/loader.gif" id="update-spinner">
+
                         </div>
                         <!-- / btn-container -->
                     </form>
@@ -133,7 +139,7 @@ if(!isset($_SESSION['s_user_id'])){
                                 <div id="div-gpt-ad-1397179863114-0" style="width: 728px; height: 90px;">
 
 
-                                    <div id="google_ads_iframe_/16921351/jarvis-list-footer-728x90_0__container__" style="border: 0pt none;"></div>
+                                    <div id="" style="border: 0pt none;"></div>
                                 </div>
                             </div>
                             <!-- / dpa-container -->
@@ -146,7 +152,7 @@ if(!isset($_SESSION['s_user_id'])){
 
                 <div class="row">
                     <div class="col-md-12">
-                        <p class="links"><a class="badge-evt" data-evt="SiteAction,Footer,FeedbackClicked" href="https://docs.google.com/a/9gag.com/forms/d/1SD9o9OxUGvYXHF6OE8X3Bwuuwa91e-C2t7aBusOEPkM/viewform" target="_blank">Send Feedback</a> 9GAG.tv Â© 2015</p>
+                        <p class="links">  9GAG.tv Â© 2015</p>
                     </div>
                     <!-- / col-md-12 -->
                 </div>

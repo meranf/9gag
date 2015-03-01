@@ -20,6 +20,10 @@
 
 </head>
 <body data-twttr-rendered="true">
+    <input type="hidden" id="gallery_start" value="0" />
+    <input type="hidden" id="mode" value="home" />
+
+    
     <div id="fb-root"></div>
     <!-- Static navbar -->
 <?php include('inc/header.php'); ?>
@@ -36,9 +40,7 @@
 
             
                 $thumb_image = $value['thmbnail'];
-
-              
-
+ 
 
               ?>
                     
@@ -75,47 +77,11 @@
                 <div class="col-md-8">
                     <div id="jsid-video-post-grid-container" data-ref-id="aKl6b0" data-limit="20" data-index-key="LJEGX" data-grid-type="gridAppend">
                         <div class="main">
-                            <div class="badge-post-grid-container post-list-t1 horizontal col-4" data-grid-key="Landing-TwoColumn-Left">
-                                
-<div class="badge-grid-item badge-post-item-a5wgg6"  >
-                                    <div class="item twoColumn-left clearfix">
-                                        <a class="img-container" data-ga-label="ImageClicked" href="">
-                                        <div class="responsivewrapper" style="background: url(images/cover.jpg) center; background-size: cover;">
-                                        </div></a>
+                            <div id="home_list" class="badge-post-grid-container post-list-t1 horizontal col-4">
+                                <img id="login-spinner" src="images/loader.gif" style="margin: 134px auto 0px; position: absolute; left: 50%;">
 
-                                        <div class="info">
-                                            <a class="title" data-ga-label="TitleClicked" href="">
-                                            <h4>"Fifty Shades Of Grey" In Real
-                                            Life Doesn't Always Work
-                                            <small>1:37</small></h4></a>
 
-                                            <div class="meta">
-                                                <p>You may take the stairs next
-                                                time.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-  
-  <div class="badge-grid-item badge-post-item-a5wgg6" data-hashed-id="a5wgg6">
-                                    <div class="item twoColumn-left clearfix">
-                                        <a class="img-container" data-ga-label="ImageClicked" href="">
-                                        <div class="responsivewrapper" style="background: url('images/cover.jpg') center; background-size: cover;">
-                                        </div></a>
 
-                                        <div class="info">
-                                            <a class="title" data-ga-label="TitleClicked" href="">
-                                            <h4>"Fifty Shades Of Grey" In Real
-                                            Life Doesn't Always Work
-                                            <small>1:37</small></h4></a>
-
-                                            <div class="meta">
-                                                <p>You may take the stairs next
-                                                time.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div><!-- / post-list-t1 -->
                         </div><!-- / main -->
                     </div>
@@ -158,38 +124,18 @@
                     </div><!-- / sidebar -->
                 </div><!-- / col-md-4 -->
 
-                <div id="jsid-post-grid-pager-bottom" class="col-md-12">
-                    <p class="badge-post-grid-load-more loading-spinner">
+                <div id="jsid-post-grid-pager-bottom" class="col-md-12 load-more btn">
+                    <a href="javascript:;" class="gallery-tabs">Load More</a>
+                    <p class="badge-post-grid-load-more loading-spinner galspinner" style="display:none">
                     <i class="fa fa-spinner fa-spin"></i> Loading</p>
+
                 </div>
+
             </div>
         </div><!-- / container --><a style="font-style: italic" href="javascript:%20void(0);" class="badge-back-to-top back-to-top fa fa-arrow-up"></a>
     </div>
 
-  <!--   <div class="overlay-box-container" data-site-id="tv" id=
-    "jsid-container-email-subscription">
-        <div class="box">
-            <a class="badge-subscription-close badge-evt close" data-evt=
-            "SiteAction,SubscriptionBox,Dismiss" href=
-            "javascript:void(0);"> hello</a>
-
-            <div class="box-content">
-                <h4 class="text-center">Subscribe to 9GAG.tv</h4>
-
-                <div class="badge-subscription-form input-group">
-                    <input class="badge-subscription-email form-control" type=
-                    "email"><span class="input-group-btn"><a class=
-                    "badge-subscription-submit btn btn-primary" href=
-                    "javascript:void(0);">Subscribe</a></span>
-                     
-                </div> 
-
-                <div class="badge-subscription-msg subscribe-message hide">
-                    <p>Thank you for subscribing.</p>
-                </div> 
-            </div> 
-        </div> 
-    </div> -->
+  
 
     <div class="alert-message-container" id="jsid-alert-message">
     </div>
@@ -218,13 +164,25 @@
             <div class="row">
                 <div class="col-md-12">
                     <p class="links"><a class="badge-evt" data-evt=
-                    "SiteAction,Footer,FeedbackClicked" href=
-                    ""
-                    target="_blank">Send Feedback</a> 9GAG.tv© 2015</p>
+                    "SiteAction,Footer,FeedbackClicked" href="" >Send Feedback</a> 9GAG.tv© 2015</p>
                 </div><!-- / col-md-12 -->
             </div><!-- / row -->
         </div><!-- / container -->
     </footer>
+    <script>
+    $(function(){
+            $.GetGallery();
+        $(".gallery-tabs").click(function(){
+            $.GetGallery();
+        });
+        $('.badge-back-to-top').click(function(){
+            $('html, body').animate({
+                               scrollTop: 0
+                           }, 1000);
+        });
+
+    });
+    </script>
 </body>
 
 </html>

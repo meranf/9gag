@@ -22,6 +22,11 @@
     </head>
 
     <body>
+
+    <input type="hidden" id="gallery_start" value="0" />
+    <input type="hidden" id="mode" value="home" />
+
+        <input type="hidden" id="cat_id" value="<?php echo $_REQUEST['id']; ?>" />
         <!-- Static navbar -->
        <?php include('inc/header.php'); ?>
 
@@ -34,43 +39,9 @@
                     <div class="col-md-8">
                         <div data-grid-type="gridAppend" data-index-key="dJ4km" data-ref-id="aKAepk" data-limit="20" id="jsid-video-post-grid-container">
                             <div class="main">
-                                <div data-grid-key="Channel-TwoColumn-Left" class="badge-post-grid-container post-list-t1 horizontal col-4">
-                                    <div data-hashed-id="aKAepk" class="badge-grid-item badge-post-item-aKAepk">
-                                        <div class="item twoColumn-left clearfix">
-                                            <a data-ga-label="ImageClicked" href="http://9gag.tv/p/aKAepk/how-x-men-days-of-future-past-should-have-ended?ref=cl" class="img-container">
-                                                <div style="background: url('http://cdn-jarvis-ftw.9gaging.com/media/photo/pVGb0kVQk_360w_v1.jpg') center; background-size: cover;" class="responsivewrapper"></div>
-                                            </a>
-                                            <div class="info"><a data-ga-label="TitleClicked" href="http://9gag.tv/p/aKAepk/how-x-men-days-of-future-past-should-have-ended?ref=cl" class="title"><h4>This Is How "X-Men: Days Of Future Past" Should Have Ended <small>3:20</small></h4></a>
-                                                <div class="meta">
-                                                    <p></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div data-hashed-id="aKAepk" class="badge-grid-item badge-post-item-aKAepk">
-                                        <div class="item twoColumn-left clearfix">
-                                            <a data-ga-label="ImageClicked" href="http://9gag.tv/p/aKAepk/how-x-men-days-of-future-past-should-have-ended?ref=cl" class="img-container">
-                                                <div style="background: url('http://cdn-jarvis-ftw.9gaging.com/media/photo/pVGb0kVQk_360w_v1.jpg') center; background-size: cover;" class="responsivewrapper"></div>
-                                            </a>
-                                            <div class="info"><a data-ga-label="TitleClicked" href="http://9gag.tv/p/aKAepk/how-x-men-days-of-future-past-should-have-ended?ref=cl" class="title"><h4>This Is How "X-Men: Days Of Future Past" Should Have Ended <small>3:20</small></h4></a>
-                                                <div class="meta">
-                                                    <p></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div data-hashed-id="aKAepk" class="badge-grid-item badge-post-item-aKAepk">
-                                        <div class="item twoColumn-left clearfix">
-                                            <a data-ga-label="ImageClicked" href="http://9gag.tv/p/aKAepk/how-x-men-days-of-future-past-should-have-ended?ref=cl" class="img-container">
-                                                <div style="background: url('http://cdn-jarvis-ftw.9gaging.com/media/photo/pVGb0kVQk_360w_v1.jpg') center; background-size: cover;" class="responsivewrapper"></div>
-                                            </a>
-                                            <div class="info"><a data-ga-label="TitleClicked" href="http://9gag.tv/p/aKAepk/how-x-men-days-of-future-past-should-have-ended?ref=cl" class="title"><h4>This Is How "X-Men: Days Of Future Past" Should Have Ended <small>3:20</small></h4></a>
-                                                <div class="meta">
-                                                    <p></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div id="home_list" class="badge-post-grid-container post-list-t1 horizontal col-4">
+                                    <img id="login-spinner" src="images/loader.gif" style="margin: 134px auto 0px; position: absolute; left: 50%;">
+                                   
                                 </div>
                                 <!-- / post-list-t1 -->
                             </div>
@@ -79,47 +50,24 @@
                     </div>
                     <!-- / col-md-8 -->
                     <div class="col-md-4 hidden-sm hidden-xs">
-                        <div id="jsid-sidebar-post-grid-container" class="sidebar" data-limit="15" data-ref-id="a5dNq6" data-index-key="yX5eX" data-grid-type="gridAppend">
+                        <div  id="jsid-sidebar-post-grid-container" class="sidebar" data-limit="15" >
                             <div class="section-header">
-                                <h3>Most Popular In Movie &amp; TV</h3>
+                                <h3>Most Popular In <?php echo $_REQUEST['title']; ?></h3>
                             </div>
 
-                            <div class="badge-grid-item badge-post-item-a5dNq6" data-hashed-id="a5dNq6">
-                                <div class="item clearfix r-17-7">
-                                    <a class="img-container" href="http://9gag.tv/p/a5dNq6/the-poltergeist-remake-first-trailer-and-it-s-scary-as-hell?ref=cr" data-ga-label="ImageClicked">
-                                        <div class="responsivewrapper" style="background: url('http://cdn-jarvis-ftw.9gaging.com/media/photo/p5QrkbeWZ_360w_v1.jpg') center; background-size: cover;"></div>
-                                    </a>
-                                    <div class="info"><a class="title" href="http://9gag.tv/p/a5dNq6/the-poltergeist-remake-first-trailer-and-it-s-scary-as-hell?ref=cr" data-ga-label="TitleClicked"><h4>The "Poltergeist" Remake Has Its First Trailer And It's SCARY As Hell! <small>2:27</small></h4></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="badge-grid-item badge-post-item-a5dNq6" data-hashed-id="a5dNq6">
-                                <div class="item clearfix r-17-7">
-                                    <a class="img-container" href="http://9gag.tv/p/a5dNq6/the-poltergeist-remake-first-trailer-and-it-s-scary-as-hell?ref=cr" data-ga-label="ImageClicked">
-                                        <div class="responsivewrapper" style="background: url('http://cdn-jarvis-ftw.9gaging.com/media/photo/p5QrkbeWZ_360w_v1.jpg') center; background-size: cover;"></div>
-                                    </a>
-                                    <div class="info"><a class="title" href="http://9gag.tv/p/a5dNq6/the-poltergeist-remake-first-trailer-and-it-s-scary-as-hell?ref=cr" data-ga-label="TitleClicked"><h4>The "Poltergeist" Remake Has Its First Trailer And It's SCARY As Hell! <small>2:27</small></h4></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="badge-grid-item badge-post-item-a5dNq6" data-hashed-id="a5dNq6">
-                                <div class="item clearfix r-17-7">
-                                    <a class="img-container" href="http://9gag.tv/p/a5dNq6/the-poltergeist-remake-first-trailer-and-it-s-scary-as-hell?ref=cr" data-ga-label="ImageClicked">
-                                        <div class="responsivewrapper" style="background: url('http://cdn-jarvis-ftw.9gaging.com/media/photo/p5QrkbeWZ_360w_v1.jpg') center; background-size: cover;"></div>
-                                    </a>
-                                    <div class="info"><a class="title" href="http://9gag.tv/p/a5dNq6/the-poltergeist-remake-first-trailer-and-it-s-scary-as-hell?ref=cr" data-ga-label="TitleClicked"><h4>The "Poltergeist" Remake Has Its First Trailer And It's SCARY As Hell! <small>2:27</small></h4></a>
-                                    </div>
-                                </div>
-                            </div>
+                            
 
                         </div>
                         <!-- / sidebar -->
                     </div>
                     <!-- / col-md-4 -->
-                    <div class="col-md-12" id="jsid-post-grid-pager-bottom">
-                        <p class="badge-post-grid-load-more loading-spinner"><i class="fa fa-spinner fa-spin"></i> Loading</p>
-                    </div>
+                      <div id="jsid-post-grid-pager-bottom" class="col-md-12 load-more btn">
+                    <a href="javascript:;" class="gallery-tabs" style="display:none;">Load More</a>
+                    <p class="badge-post-grid-load-more loading-spinner galspinner" style="display:none">
+                    <i class="fa fa-spinner fa-spin"></i> Loading</p>
+
+                </div>
+
                 </div>
             </div>
             <!-- / container --><a href="javascript: void(0);" class="badge-back-to-top back-to-top hide"><i class="fa fa-arrow-up"></i></a>
@@ -159,7 +107,25 @@
             <!-- / container -->
         </footer>
 
-        
+        <script>
+            $(function(){
+                var cat_id = $("#cat_id").val();
+                $(".chanelnav"+cat_id).addClass('active');
+            });
+
+            
+        </script>
+        <script>
+            $(function(){
+                    $.GetGallery();
+                    $.GetInnerGallery();
+                    $(".gallery-tabs").click(function(){
+                        $.GetGallery();
+                    });
+
+            });
+    </script>
+
     </body>
 
 </html>

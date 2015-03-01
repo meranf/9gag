@@ -6,28 +6,28 @@
                     <a href="<?php echo WEBSITE_URL; ?>">Home</a>
                 </li>
 
-                <li class="">
-                    <a class="badge-evt"  href="<?php echo WEBSITE_URL; ?>category.php?id=1">Game</a>
+                <li class="chanelnav1">
+                    <a class="badge-evt"  href="<?php echo WEBSITE_URL; ?>category.php?id=1&title=Game">Game</a>
                 </li>
 
-                <li class="">
-                    <a class="badge-evt"  href="<?php echo WEBSITE_URL; ?>category.php?id=2">Fail &amp; Prank</a>
+                <li class="chanelnav2">
+                    <a class="badge-evt"  href="<?php echo WEBSITE_URL; ?>category.php?id=2&title=Fail And Prank">Fail &amp; Prank</a>
                 </li>
 
-                <li class="">
-                    <a class="badge-evt" href="<?php echo WEBSITE_URL; ?>category.php?id=3">Cute</a>
+                <li class="chanelnav3">
+                    <a class="badge-evt" href="<?php echo WEBSITE_URL; ?>category.php?id=3&title=Cute">Cute</a>
                 </li>
 
-                <li class="">
-                    <a class="badge-evt"  href="<?php echo WEBSITE_URL; ?>category.php?id=4">Music</a>
+                <li class="chanelnav4">
+                    <a class="badge-evt"  href="<?php echo WEBSITE_URL; ?>category.php?id=4&title=Music">Music</a>
                 </li>
 
-                <li class="">
-                    <a class="badge-evt" href="<?php echo WEBSITE_URL; ?>category.php?id=5">Movie &amp; TV</a>
+                <li class="chanelnav5">
+                    <a class="badge-evt" href="<?php echo WEBSITE_URL; ?>category.php?id=5&title=Movie And Tv">Movie &amp; TV</a>
                 </li>
 
-                <li class="">
-                    <a class="badge-evt"  href="<?php echo WEBSITE_URL; ?>category.php?id=6">NSFW</a>
+                <li class="chanelnav6">
+                    <a class="badge-evt"  href="<?php echo WEBSITE_URL; ?>category.php?id=6&title=NSFW">NSFW</a>
                 </li>
             </ul>
         </div><!-- / container -->

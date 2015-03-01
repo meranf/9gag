@@ -1,5 +1,10 @@
 <?php include('api/config.php');  ?>
-
+<?php 
+if(!isset($_SESSION['s_user_id'])){
+  header('location: index.php')  ;
+/* echo '<script>window.location="'.WEBSITE_URL.'";<script>';
+*/}
+ ?>
 <!DOCTYPE html>
 <html>
 <hcssead>
@@ -27,7 +32,7 @@
      <?php include('inc/header.php'); ?>
 
 <?php include('inc/channel.php'); ?>
-
+<input type="hidden" id="uid" value="<?php echo $_SESSION['s_user_id']; ?>"> 
 <div class="container">
     <div class="wrapper">
         <div class="page-wrapper">
@@ -48,43 +53,49 @@
                     </div>
                     <!-- / col-sm-3 -->
                     <div class="col-sm-9">
-                        <form role="form" action="http://9gag.tv/account/settings" method="POST" class="form-horizontal" name="settingForm">
+                        <form class="form-horizontal"  action="javascript:;">
                             <input type="hidden" value="account" name="nav">
                             <div class="page-header">
                                 <h1>Account</h1>
                             </div>
                             <div class="form-group">
+                                <div class="alert alert-danger" id="error-login" style="display:none">
+                                Some Thing Wong!
+                            </div>
                                 <label class="col-sm-3 control-label" for="inputavatar1">Avatar</label>
                                 <div class="col-sm-9 col-lg-6">
                                     <div class="form-avatar">
-                                        <input type="hidden" name="setting[profile][avatarId]" id="jsid-value-avatar">
-                                        <div data-url="http://9gag.tv/account/avatar" class="badge-dragndrop-upload avatar-preview" id="jsid-container-avatar-preview"><img src="http://accounts-cdn.9gag.com/media/avatar/24363169_100_1.jpg">
+                                        <input type="hidden" name="" id="pic_path">
+                                    
+                                        <div  class="badge-dragndrop-upload avatar-preview" style="margin-bottom:10px;" id="jsid-container-avatar-preview"><img onerror="$(this).src='images/avatar.jpg';" id="image_preview" src="images/avatar.jpg">
                                         </div>
                                         <div class="avatar-file">
-                                            <input type="file" data-url="http://9gag.tv/account/avatar" class="badge-dragndrop-upload upload" id="inputavatar1">
-                                            <p class="help-block">JPG, GIF or PNG, Max size: 2MB</p>
+                                            <input type="button" value="Browse"  onclick='$("#photo_iframe2").contents().find("input").trigger("click");' class="badge-dragndrop-upload upload" id="inputavatar1">
+                                            <p class="help-block">JPG, or PNG, Max size: 2MB</p>
+                                            <img height="20" style="margin-top: -10px; display:none;" src="images/loader.gif" id="upload-spinner">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-3 control-label" for="inputusername1">Username</label>
+
+                                <label class="col-sm-3 control-label" for="name">Name</label>
                                 <div class="col-sm-9 col-lg-6">
-                                    <input type="text" value="comnet444" name="setting[profile][username]" id="inputusername1" class="form-control">
+                                    <input type="text" value="" name="" id="name" class="form-control">
                                 </div>
                             </div>
                             <!-- / form-group -->
                             <div class="form-group">
-                                <label class="col-sm-3 control-label" for="inputemail1">Email Address</label>
+                                <label class="col-sm-3 control-label" for="email">Email Address</label>
                                 <div class="col-sm-9 col-lg-6">
-                                    <input type="email" value="comnet444@gmail.com" id="inputemail1" class="form-control" name="setting[account][email]">
+                                    <input type="email" value="<?php echo $_SESSION['s_email']; ?>"  id="email" class="form-control" name="">
                                     <p class="help-block">
                                         Email address will not be displayed publicly
                                         <br>
                                     </p>
                                 </div>
                             </div>
-                            <div class="form-group">
+                          <!--   <div class="form-group">
                                 <label class="col-sm-3 control-label" for="inputlanguage1">Language</label>
                                 <div class="col-sm-9 col-lg-6">
                                     <select name="setting[account][language]" class="form-control" id="inputlanguage1">
@@ -100,14 +111,15 @@
                                         <option value="tr">Türkçe</option>
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
+                            <iframe id="photo_iframe2" src="upload-file.php" scrolling="no" frameborder="0" width="0px" height="0px" style="display:none;"> </iframe> 
                             <div class="form-group">
-                                <label class="col-sm-3 control-label" for="inputgender1">Gender</label>
+                                <label class="col-sm-3 control-label" for="gender">Gender</label>
                                 <div class="col-sm-9 col-lg-6">
-                                    <select name="setting[account][gender]" class="form-control" id="inputgender1">
+                                    <select name="setting[account][gender]" class="form-control" id="gender">
                                         <option selected="" value="0">Unspecified</option>
-                                        <option value="1">Male</option>
-                                        <option value="2">Female</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
                                     </select>
                                 </div>
                             </div>
@@ -353,18 +365,18 @@
                                 <div class="col-sm-9 col-lg-6">
                                     <div class="row gutter-10">
                                         <div class="col-xs-4">
-                                            <input type="text" value="" name="setting[account][date_of_birth][year]" placeholder="YYYY" class="form-control" id="inputbirthday1">
+                                            <input type="text" value="" name="" placeholder="YYYY" class="form-control" id="bday_year">
                                         </div>
                                         <div class="col-xs-4">
-                                            <input type="text" value="" name="setting[account][date_of_birth][month]" placeholder="MM" class="form-control">
+                                            <input type="text" value="" name="" placeholder="MM" class="form-control" id="bday_month">
                                         </div>
                                         <div class="col-xs-4">
-                                            <input type="text" value="" name="setting[account][date_of_birth][day]" placeholder="DD" class="form-control">
+                                            <input type="text" value="" name="" placeholder="DD" class="form-control" id="bday_day">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                         <!--    <div class="form-group">
                                 <label class="col-sm-3 control-label" for="inputsocialaccountfacebook1">Facebook</label>
                                 <div class="col-sm-9 col-lg-6">
                                     <button value="connectFacebook" type="submit" name="action" class="btn btn-social btn-facebook"><i class="fa fa-facebook"></i>Connect to Facebook</button>
@@ -375,11 +387,12 @@
                                 <div class="col-sm-9 col-lg-6">
                                     <button value="disconnectGplus" type="submit" name="action" class="btn btn-link no-padding">Disconnect</button>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <div class="col-sm-offset-3 col-sm-6">
                                     <div class="btn-container">
-                                        <input type="submit" value="Save Changes" class="btn btn-primary" id="jsid-settings-save">
+                                        <input type="button" value="Save Changes" class="btn btn-primary" id="jsid-settings-save">
+                                        <img height="25" style="margin-left: 10px; display:none;" src="images/loader.gif" id="update-spinner">
                                     </div>
                                 </div>
                             </div>
@@ -407,9 +420,7 @@
                             "width: 728px; height: 90px;">
                                 
 
-                                <div id=
-                                "google_ads_iframe_/16921351/jarvis-list-footer-728x90_0__container__"
-                                style="border: 0pt none;"></div>
+                                <div id="" style="border: 0pt none;"></div>
                             </div>
                         </div><!-- / dpa-container -->
                     </div><!-- / dpa-728 -->
@@ -418,14 +429,96 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <p class="links"><a class="badge-evt" data-evt=
-                    "SiteAction,Footer,FeedbackClicked" href=
-                    "https://docs.google.com/a/9gag.com/forms/d/1SD9o9OxUGvYXHF6OE8X3Bwuuwa91e-C2t7aBusOEPkM/viewform"
-                    target="_blank">Send Feedback</a> 9GAG.tv Â© 2015</p>
+                    <p class="links"> 9GAG.tv Â© 2015</p>
                 </div><!-- / col-md-12 -->
             </div><!-- / row -->
         </div><!-- / container -->
     </footer>
+
+    <script>
+    $(function(){
+        var uid = $("#uid").val();
+
+        $.post(API_URL+"login.php", {id:uid, action:'getUserInfo'}, function(data){
+          
+          if(data.image_path != null){
+            
+             $("#image_preview").attr('src',data.image_path);
+          }
+
+         // $("#image_preview").attr('src','');
+          $("#name").val(data.name);
+          $("#email").val(data.email);
+          $("#gender").val(data.gender);
+          $("#inputcountry1").val(data.currentLocation);
+          if(data.birthday != null){
+          var birthday = data.birthday.split('-');
+          if(birthday.length > 2){
+            $("#bday_year").val(birthday[0]);
+            $("#bday_month").val(birthday[1]);
+            $("#bday_day").val(birthday[2]);
+          
+          }
+      }
+ 
+        }, "json" );
+
+        $("#jsid-settings-save").click(function(){
+
+            var name =  $("#name");
+            var email =  $("#email");
+            var gender =  $("#gender");
+            var currentLocation= $("#inputcountry1");
+            var image_path = $("#pic_path");
+
+            var bday1 = $("#bday_year");
+            var bday2 = $("#bday_month");
+            var bday3 = $("#bday_day");
+            var bday = '';
+            var errors = [];
+            if(bday1.val()!= '' && bday2.val() != '' && bday3.val() != ''){
+
+                bday = bday1.val()+'-'+bday2.val()+'-'+bday3.val();
+            }
+
+ 
+           
+                if($.trim(name.val()) == ''){
+                    name.parent().addClass('has-error');
+                    errors.push('Please enter name.');
+                }else{
+                    name.parent().removeClass('has-error');
+                }
+
+                if($.trim(email.val()) == '' || $.trim(email.val().toLowerCase()) == 'email address' ||   isValidEmail($.trim(email.val())) == false){
+                    email.parent().addClass('has-error');
+                    errors.push('Please enter email address.');
+                }else{
+                    email.parent().removeClass('has-error');
+                }
+            if(errors.length < 1){
+ 
+            $("#update-spinner").show();
+                 $.post(API_URL+"get-videos.php", {name:name.val(),email:email.val(), gender:gender.val(),
+                                                   currentLocation:currentLocation.val(),
+                                                   image_path:image_path.val(),
+                                                   birthday:bday,
+                                                   action:'updateUser'}, function(data){
+
+                    $("#update-spinner").hide();
+                    
+                    if(data.status == 'success'){
+                            $("#error-login").addClass('alert-success').removeClass('alert-danger').html('Updated Successfully').fadeIn().delay(4000).fadeOut();
+                    }else{
+                            $("#error-login").removeClass('alert-success').addClass('alert-danger').html('Email Address Already Exists, Please Try Another').fadeIn().delay(4000).fadeOut();
+                    }
+     
+                 }, "json" );
+         }
+
+        });
+    });
+    </script>
 </body>
 
 </html>

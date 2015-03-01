@@ -11,6 +11,7 @@ if(window.devicePixelRatio > 1) { document.cookie='HTTP_IS_RETINA=1;path=/'; }
 
 <script>
   window.fbAsyncInit = function() {
+    
     FB.init({
       appId      : '863460623710098',
       xfbml      : true,

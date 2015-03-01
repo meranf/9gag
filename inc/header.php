@@ -2,7 +2,9 @@
 
 <nav class="navbar navbar-inverse navbar-static-top">
         <div class="container">
-            <a href="<?php echo WEBSITE_URL; ?>index.php" class="badge-evt navbar-brand"><img style="margin-top:-15px;" height="60" width="150" src="images/logos.jpg"></a>
+            <a href="<?php echo WEBSITE_URL; ?>index.php" class="badge-evt navbar-brand">
+                <!-- <img style="margin-top:-15px;" height="60" width="150" src="images/logo.png"> -->
+            </a>
 
             <?php if(isset($_SESSION['s_user_id']) && $_SESSION['s_user_id'] > 0){ ?>
             <ul class="badge-account-me nav-account nav navbar-nav navbar-right">
@@ -10,11 +12,20 @@
                     <a class="badge-evt dropdown-toggle" onclick="$('#login_options').toggle();" data-toggle="dropdown" href="javascript:void(0);"><i class="caret"></i>
 
                     <div class="img-container">
-                        <?php
-                        $src = WEBSITE_URL."images/blank.jpg";
-                        if($_SESSION['userId'] > 0 && ($_SESSION['type'] == 'facebook' || $_SESSION['type'] == 'google' )){
-                            $src = $_SESSION['pic'];
-                        } 
+                       <?php
+                       
+                          
+                             $src = $_SESSION['user_info']['image_path'];
+                           
+                           if( $src == '' ||  $src == NULL  ){
+                                
+                               $src = WEBSITE_URL."images/blank.jpg";
+
+
+                           }else if($_SESSION['userId'] > 0 && ($_SESSION['type'] == 'facebook' || $_SESSION['type'] == 'google' )){
+
+                                $src = $_SESSION['pic'];
+                            } 
                          ?>
                         <img class="badge-account-avatar" height="34" src="<?php echo $src; ?>" width="34">
                     </div>

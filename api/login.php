@@ -3,6 +3,86 @@
 // Include required 
 include_once("config.php");
 
+
+if(isset($_REQUEST["info"]) && isset($_REQUEST["name"]) && $_REQUEST["type"] == 'update_info' ){
+
+if(isset($_SESSION['s_user_id']) && $_SESSION['s_user_id'] > 0){
+
+		$user_id= $_SESSION['s_user_id'];
+		
+		$info = REMOVE_SPECIAL($_REQUEST["info"]);
+		$name = REMOVE_SPECIAL($_REQUEST["name"]);
+
+		$sql = "Select IFNULL(COUNT(id),0) as userexist , id from user where `id` = '".$user_id."'  ";
+ 
+		$row = mysql_fetch_array(db_execute_return($sql));
+
+		$userData['status'] = 'error';
+		$userData['msg'] = 'code is expired';
+
+		if($row["userexist"] > 0){
+				db_execute('update user set `info` = "'.$info.'" ,  `name` = "'.$name.'" where `id` = "'.$user_id.'" ');
+ 				$_SESSION['user_info']['name'] =$name;
+ 				$_SESSION['user_info']['info'] =$info;
+				$userData['status'] = 'success';
+				$userData['msg'] = 'Profile has been updated successfully';
+
+ 		}
+
+ 	}else{
+		$userData['status'] = 'error';
+		$userData['msg'] = 'session is expired';
+
+ 	}
+		$data = json_encode($userData);
+	
+		//Return User Data
+		echo $data;
+
+}
+
+if(isset($_REQUEST["password"]) && $_REQUEST["type"] == 'updatePassword' ){
+
+	if(isset($_SESSION['s_user_id']) && $_SESSION['s_user_id'] > 0){
+
+		$user_id= $_SESSION['s_user_id'];
+		$sql = "Select IFNULL(COUNT(id),0) as userexist , id from user where `id` = '".$user_id."'  ";
+ 
+		$row = mysql_fetch_array(db_execute_return($sql));
+
+		$userData['status'] = 'error';
+		$userData['msg'] = 'code is expired';
+
+		if($row["userexist"] > 0){
+		 		$password = REMOVE_SPECIAL($password);
+
+				db_execute('update user set password = "'.md5($password).'" where `id` = "'.$user_id.'" ');
+ 
+				$userData['status'] = 'success';
+				$userData['msg'] = 'Password has been updated successfully';
+ 		}
+
+ 	}else{
+		$userData['status'] = 'error';
+		$userData['msg'] = 'session is expired';
+
+ 	}
+		$data = json_encode($userData);
+	
+		//Return User Data
+		echo $data;
+
+}
+if(isset($_REQUEST["id"]) && $_REQUEST["action"] == 'getUserInfo'){
+	
+	$data = getUserDetail($_REQUEST['id']);
+	
+	$data = json_encode($data);
+			
+	echo $data;
+}
+
+
 /* This call generate when user login to the app. Please note that, client will first check user data in cache. If they got the data than it means this is an existing user and will not generate the login call. If the user is new or cache has been cleared than client make this call. Once received the data from call, client should save that data in cache so that they can use it in future. */
 if(isset($_REQUEST["email"]) && isset($_REQUEST["password"]) && $_REQUEST["type"] == 'login'  )
 {
@@ -28,15 +108,15 @@ if(isset($_REQUEST["email"]) && isset($_REQUEST["password"]) && $_REQUEST["type"
 			SetData($key,$userExist);
 			 
 			 $userData = getUserDetail($row["id"]);
+
 			 $_SESSION['s_user_id'] = $row["id"];
- 
-			 $_SESSION['userId'] = $row["userId"];
-			 
-			 $_SESSION['s_user_name'] = $userData["name"];
+ 			 $_SESSION['userId'] = $row["userId"];
+ 			 $_SESSION['s_user_name'] = $userData["name"];
 			 $_SESSION['s_user_email'] = $userData["email"];
 			 $_SESSION['type'] = 'web';
 			 $_SESSION['pic'] =  $userData["pic_path"];
-			$userData['status'] = 'success';
+			 $_SESSION['user_info'] =$userData;
+			 $userData['status'] = 'success';
 			
 			//Convert User Data into Json
 			$data = json_encode($userData);
@@ -67,9 +147,10 @@ if(isset($_REQUEST["email"]) && isset($_REQUEST["password"]) && isset($_REQUEST[
 			 $_SESSION['s_user_name'] = $_REQUEST["name"];
 			 $_SESSION['s_user_email'] = $_REQUEST["email"];
 			 $_SESSION['userId'] = $row["userId"];
-				$_SESSION['pic'] =  $row["pic_path"];
-			$row['status'] = 'success';
-			
+			 $_SESSION['pic'] =  $row["pic_path"];
+			 $row['status'] = 'success';
+			$_SESSION['user_info'] =$row;
+
 			//Convert User Data into Json
 			$data = json_encode($row);
 			
@@ -115,7 +196,7 @@ if(isset($_REQUEST["email"]) && $_REQUEST["type"] == 'google' &&
 	 $_SESSION['userId'] = $_REQUEST["id"];
 	 $userData['status'] = 'success';
 	 $_SESSION['type'] = 'google';
-
+	 $_SESSION['user_info'] =$userData;
 	 $_SESSION['pic'] = $_REQUEST["pic"];
 
 	//Convert User Data into Json
@@ -178,7 +259,7 @@ if(isset($_REQUEST["email"]) && $_REQUEST["type"] == 'reset'  )
 			SetData($key,$userExist);
 			
 
-			if($row['type'] == 'web'){
+			//if($row['type'] == 'web'){
 			// send email to user
 				$code = generateRandomString(10);
 
@@ -207,16 +288,7 @@ if(isset($_REQUEST["email"]) && $_REQUEST["type"] == 'reset'  )
 				$userData['status'] = 'success';
 				$userData['msg'] = 'An email has been sent to your email address with password';
 			
-			//Convert User Data into Json
-
-			}else{
-
-					$userData['status'] = 'error';
-					$userData['msg'] = 'You are connected via Social login plugin, please connect with Facebook or Google Connect or signup with new email';
-			
-			//Convert User Data into Json
-			}
-
+  
 		
 			$data = json_encode($userData);
 			
@@ -256,6 +328,7 @@ if(isset($_REQUEST["userId"]) && isset($_REQUEST["accessToken"]))
 	 $_SESSION['pic'] = '//graph.facebook.com/'.$_REQUEST["userId"].'/picture?width=50&amp;height=50';
 
 	$userData['status'] = 'success';
+	$_SESSION['user_info'] =$userData;
 	
 	//Convert User Data into Json
 	$data = json_encode($userData);

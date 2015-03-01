@@ -1,5 +1,10 @@
 <?php include('api/config.php');  ?>
-
+<?php 
+if(!isset($_SESSION['s_user_id'])){
+  header('location: index.php')  ;
+/* echo '<script>window.location="'.WEBSITE_URL.'";<script>';
+*/}
+ ?>
 <!DOCTYPE html>
 <html>
 <hcssead>
@@ -49,7 +54,7 @@
                     </div>
                     <!-- / col-sm-3 -->
                      <div class="col-sm-9">
-        <form action="http://9gag.tv/account/password" class="form-horizontal"
+        <form action="javascript:;" class="form-horizontal"
         id="settingForm" method="post" name="settingForm">
             <input name="nav" type="hidden" value="password">
 
@@ -57,7 +62,7 @@
                 <h1>Password</h1>
             </div>
 
-            <div class="form-group">
+          <!--   <div class="form-group">
                 <label class="col-sm-3 control-label" for=
                 "inputoldpassword1">Old Password</label>
 
@@ -65,15 +70,18 @@
                     <input class="form-control" id="inputoldpassword1" name=
                     "setting[password][password][oldPassword]" type="password">
                 </div>
-            </div>
+            </div> -->
 
             <div class="form-group">
+                 <div class="alert alert-danger" id="error-login" style="display:none">
+                                Some Thing Wong!
+                            </div>
                 <label class="col-sm-3 control-label" for=
                 "inputnewpassword1">New Password</label>
 
                 <div class="col-sm-9 col-lg-6">
-                    <input class="form-control" id="inputnewpassword1" name=
-                    "setting[password][password][newPassword]" type="password">
+                    <input class="form-control" id="password" name=
+                    "password" type="password">
                 </div>
             </div>
 
@@ -82,8 +90,8 @@
                 "inputconfirmnewpassword1">Confirm Password</label>
 
                 <div class="col-sm-9 col-lg-6">
-                    <input class="form-control" id="inputconfirmnewpassword1"
-                    name="setting[password][password][newPasswordConfirm]"
+                    <input class="form-control" id="cpassword"
+                    name="cpassword"
                     type="password">
                 </div>
             </div>
@@ -91,8 +99,9 @@
             <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-9">
                     <div class="btn-container">
-                        <input class="btn btn-primary" type="submit" value=
-                        "Save Changes">
+                        <input class="btn btn-primary updatePass" type="button"  value=
+                        "Save Changes"> 
+                        <img height="25" style="margin-left: 10px; display:none;" src="images/loader.gif" id="update-spinner">
                     </div>
                 </div>
             </div>
@@ -131,14 +140,15 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <p class="links"><a class="badge-evt" data-evt=
-                    "SiteAction,Footer,FeedbackClicked" href=
-                    ""
-                    target="_blank">Send Feedback</a> 9GAG.tv  2015</p>
+                    <p class="links">  9GAG.tv  2015</p>
                 </div><!-- / col-md-12 -->
             </div><!-- / row -->
         </div><!-- / container -->
     </footer>
+<script>
+
+
+</script>
 </body>
 
 </html>

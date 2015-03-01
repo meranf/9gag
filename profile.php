@@ -1,5 +1,11 @@
 <?php include('api/config.php');  ?>
-
+<?php 
+if(!isset($_SESSION['s_user_id'])){
+  header('location: index.php')  ;
+/* echo '<script>window.location="'.WEBSITE_URL.'";<script>';
+*/}
+ ?>
+ 
 <!DOCTYPE html>
 <html>
 <hcssead>
@@ -24,7 +30,7 @@
 
     <body>
         <!-- Static navbar -->
-       <?php include('inc/header.php'); ?>
+<?php include('inc/header.php'); ?>
 
 <?php include('inc/channel.php'); ?>
 
@@ -53,45 +59,35 @@
             <input name="nav" type="hidden" value="password">
 
             <div class="page-header">
-                <h1>Password</h1>
+                <h1>Profile</h1>
             </div>
+
+          <div class="form-group">
+            <div class="alert alert-danger" id="error-login" style="display:none">
+                                Some Thing Wong!
+                            </div>
+                            
+
+            <label class="col-sm-3 control-label" for="inputfullname1">Your Name</label>
+            <div class="col-sm-9 col-lg-6">
+                <input type="text"   name="name" value="<?php echo $_SESSION['user_info']['name']; ?>" id="name" class="form-control">
+                <p class="help-block">This is the name that will be visible to other users on 9GAG.tv</p></div></div>
 
             <div class="form-group">
-                <label class="col-sm-3 control-label" for=
-                "inputoldpassword1">Old Password</label>
-
+                <label class="col-sm-3 control-label" for="inputbio1">Tell people who you are</label>
                 <div class="col-sm-9 col-lg-6">
-                    <input class="form-control" id="inputoldpassword1" name=
-                    "setting[password][password][oldPassword]" type="password">
-                </div>
-            </div>
+                    <textarea name="info" rows="2" id="info" class="form-control"><?php echo $_SESSION['user_info']['info']; ?>
+            </textarea></div></div>
 
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for=
-                "inputnewpassword1">New Password</label>
 
-                <div class="col-sm-9 col-lg-6">
-                    <input class="form-control" id="inputnewpassword1" name=
-                    "setting[password][password][newPassword]" type="password">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for=
-                "inputconfirmnewpassword1">Confirm Password</label>
-
-                <div class="col-sm-9 col-lg-6">
-                    <input class="form-control" id="inputconfirmnewpassword1"
-                    name="setting[password][password][newPasswordConfirm]"
-                    type="password">
-                </div>
-            </div>
 
             <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-9">
                     <div class="btn-container">
-                        <input class="btn btn-primary" type="submit" value=
+                        <input class="btn btn-primary save_profile" type="button" value=
                         "Save Changes">
+                <img height="25" style="margin-left: 10px; display:none;" src="images/loader.gif" id="update-spinner">
+
                     </div>
                 </div>
             </div>
@@ -130,10 +126,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <p class="links"><a class="badge-evt" data-evt=
-                    "SiteAction,Footer,FeedbackClicked" href=
-                    ""
-                    target="_blank">Send Feedback</a> 9GAG.tv Â© 2015</p>
+                    <p class="links">  9GAG.tv Â© 2015</p>
                 </div><!-- / col-md-12 -->
             </div><!-- / row -->
         </div><!-- / container -->

@@ -105,7 +105,8 @@ var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
 	$.ConnectFacebook = function(page, video_id)
 	{
 		 
-		$(".loginspinner").show();
+ 		$('#login-spinner').show();
+
 		if(server != 'localhost'){
 			FB.login(function(response) {
 				if (response.status === 'connected') 
@@ -116,11 +117,11 @@ var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
 						email_address = resp.email;
 						
  						$.post(API_URL+"login.php", {userId:uid, accessToken:access_token}, function(data){
-							$(".loginspinner").hide();
+							 
+ 							$('#login-spinner').hide();
 							if(data.status=="success"){
 								
-							 
-								// show new page
+ 								// show new page
 									var userdata = {uid : uid};
 									
 									if(page == 'home'){
@@ -177,6 +178,7 @@ var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
 	};
 	function googleDialog(url)
 { 
+	$('#login-spinner').show();
 	//$('#singnin_spinner2').show();
 //	$('#singnin_spinnerFB').show();
 	
@@ -186,16 +188,16 @@ var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
 }
 
 
+
 function gmailLogin(id,email, user_name, pic_path) {
 
-	    $(".loginspinner").show();
- 		 var user_id = id;
+  		 var user_id = id;
 
 		$.post(canvas_url+"api/login.php",  {id: id, type:'google', email:email, name:user_name, pic:pic_path}, function(data){
  			 
 			if(data.status == 'success'){
 					
-				$(".loginspinner").hide();
+				$('#login-spinner').hide();
 				window.location = canvas_url;
 
 			}else{ 
@@ -274,6 +276,73 @@ function gmailLogin(id,email, user_name, pic_path) {
 			});
 		}
 	};
+$.updatePass = function(){
+
+        $('#error-login').html('').hide();
+
+        var errors = [];
+        var password = $('#password');
+        var cpassword = $('#cpassword');
+ 
+        if($.trim(password.val()) == ''){
+            password.parent().addClass('has-error');
+            errors.push('Please enter email address.');
+        }else{
+            password.parent().removeClass('has-error');
+        }
+        if($.trim(cpassword.val()) == ''){
+            cpassword.parent().addClass('has-error');
+            errors.push('Please enter email address.');
+        }else{
+            cpassword.parent().removeClass('has-error');
+        }
+        if($.trim(cpassword.val()).length < 6 ){
+            cpassword.parent().addClass('has-error');
+            $('#error-login').removeClass('alert-danger').addClass('alert-success').html('Password must be 6 characters long').fadeIn();
+            errors.push('Please enter email address.');
+        } 
+        if($.trim(cpassword.val()) !=  $.trim(password.val())  ){
+            cpassword.parent().addClass('has-error');
+            $('#error-login').removeClass('alert-danger').addClass('alert-success').html('New password must match with confirm password').fadeIn();
+            errors.push('Please enter email address.');
+        } 
+ 
+        if(errors.length < 1){
+ 
+            $('#update-spinner').show();
+
+            var jsonData = {password:$.trim(password.val()),
+                             'type': 'updatePassword'};
+            
+            var request = $.ajax({
+                
+                url: canvas_url+'api/login.php',
+                data: jsonData,
+                type: 'POST',
+                dataType:'json'
+            });
+            
+            request.done(function(data){
+ 
+                $('#update-spinner').hide();
+                if(data.status == 'success'){
+
+                    $('#error-login').removeClass('alert-danger').addClass('alert-success').html(data.msg).removeClass('alert-danger').fadeIn().delay(4000).fadeOut('fast',function(){
+                      //  window.location = canvas_url+'signin.php';
+                    });
+
+                }else{
+                    
+                    $('#error-login').addClass('alert-danger').removeClass('alert-success').html(data.msg).addClass('alert-danger').show();
+                }
+                
+
+            });
+            request.fail(function(jqXHR, textStatus){
+                 
+            });
+        }
+    };
 
 	$.ResetPassword = function(){
 
@@ -446,18 +515,82 @@ function gmailLogin(id,email, user_name, pic_path) {
 			});
 		}
 	};
+	$.updateProfile = function(){
+		
+		$('#error-video').html('').hide();
+		
+		var errors = [];
+		var name = $('#name');
+		var info = $('#info')
+
+		if($.trim(name.val()) == ''){
+			name.parent().addClass('has-error');
+			errors.push('Please enter password.');
+		}else{
+			name.parent().removeClass('has-error');
+		}
+
+			/*
+		if($.trim(info.val()) == ''){
+			info.parent().addClass('has-error');
+			errors.push('Please enter password.');
+		}else{
+			info.parent().removeClass('has-error');
+		}*/
+		if(errors.length < 1){
+ 
+			$('#update-spinner').show();
+			var jsonData = {info:$.trim(info.val()),
+							name:$.trim(name.val()),
+							'type':'update_info'};
+			
+			var request = $.ajax({
+				
+				url: canvas_url+'api/login.php',
+				data: jsonData,
+				type: 'POST',
+				dataType:'json'
+			});
+			
+			request.done(function(data){
+ 
+				$('#update-spinner').hide();
+				if(data.status == 'success'){
+					$("#error-login").removeClass('alert-danger').addClass('alert-success').html(data.msg).fadeIn().delay(3000).fadeOut('fast',function(){
+
+						//window.location = canvas_url+'index.php';	
+					});
+					//
+				}else{
+					$('#error-login').removeClass('alert-success').addClass('alert-danger').html(data.msg).addClass('alert-danger').fadeIn();
+				}
+				
+
+			});
+			request.fail(function(jqXHR, textStatus){
+				 
+				
+			});
+		}
+
+
+
+
+	}
 
 	$.SubmitVideo = function(){
 		$('#error-video').html('').hide();
 
 		var errors = [];
 		var vide_url = $('#vide_url');
-			var video_id = $('#video_id');
+		var video_id = $('#video_id');
 		var title = $('#title');
 		var user_id = $('#user_id').val();
 		var description = $('#description');
 		var category_id = $('input[name="category_id"]:checked').val();
-  
+		var daily_motion_image = $("#daily_motion_image").val();
+		var duration = $("#daily_motion_duration").val();  
+
   		if($.trim(vide_url.val()) == ''){
 			vide_url.parent().addClass('has-error');
 			errors.push('Please enter password.');
@@ -473,20 +606,22 @@ function gmailLogin(id,email, user_name, pic_path) {
 			title.parent().removeClass('has-error');
 		}
 
-		if($.trim(description.val()) == ''){
+		/*if($.trim(description.val()) == ''){
 			description.parent().addClass('has-error');
 			errors.push('Please enter password.');
 		}else{
 			description.parent().removeClass('has-error');
-		}
+		}*/
 		if(errors.length < 1){
  
-			$('#login-spinner').show();
+			$('#update-spinner').show();
 			var jsonData = {title:$.trim(title.val()),
 							description:$.trim(description.val()),
 							link:$.trim(vide_url.val()),
 							category_id:category_id,
 							video_id:$("#video_id").val(),
+							dailymotion:daily_motion_image,
+							duration:duration,
 							user_id:user_id};
 			
 			var request = $.ajax({
@@ -518,7 +653,429 @@ function gmailLogin(id,email, user_name, pic_path) {
 			});
 		}
 	};
+$.GetDetailPageGallery = function()
+	{
+		 
+		var cat_id = 0;
 
+		if(parseInt($("#cat_id").val())){
+
+			cat_id = $("#cat_id").val();
+		}
+		 
+ 		
+		var noOfRecords		= 5;
+ 		var Error_msg = '';
+		var orderBy = 'DESC';
+ 		var resultDiv = '';
+		var SortBy = 'id';
+		var start_limit = $("#start_limit").val();
+		gal_inprogress = 1;
+		var totalrecords=0;
+
+		$.post(canvas_url+"api/get-videos.php",  {   start:start_limit,
+			noOfRecords:noOfRecords,
+			SortBy:SortBy,
+			OrderBy:orderBy,
+			action:'getVideos',
+			cat_id:cat_id}, function(data){
+			totalrecords = data.data.totalrecords;
+ 
+				if (data.data.length>0)
+				{
+				   var totalrecords = data.totalrecords;
+				   var all_videos   = data.data;
+		 		    var currentVideos = all_videos.length;
+				   var videos = '';
+				   var resultDiv = '';
+				   var curr_video_id = $("#video_id").val();
+				   var next 			= (parseInt(start_limit) + parseInt(noOfRecords));
+				   var previous =  start_limit - noOfRecords;
+				   var next_video_id = 0;
+				   var previous_video_id = 0;
+				   var position = 0;
+				   var curr_index = 0;
+
+		 		 for (var i=0;i<currentVideos;i++)
+				   { 	
+					
+						videos = all_videos[i];
+		 				Global_videos_data[videos.id] = videos;
+		 				var curr_video_id = $("#video_id").val();
+		 				if(videos.title.length > 80) videos.name.substr(0,80)+'...';
+
+			 				if(curr_video_id == videos.id){
+			 					position = i+1;
+
+			 				}else{
+
+	 						resultDiv +=  '<div class="badge-grid-item sidear_listing" data-id="'+videos.id+'" id="video-'+videos.id+'" >\
+			                                            <div class="item clearfix post-playlist">\
+			                                                <a href="'+canvas_url+'inner.php?id='+videos.id+'" class="img-container left_nav_video" data-id="'+videos.id+'" >\
+			                                                    <div style="background: url('+videos.thmbnail+') center; background-size: cover;" class="responsivewrapper"></div>\
+			                                                    <div class="responsivewrapper playing-mask hide"></div>\
+			                                                </a>\
+			                                                <div class="info">\
+			                                                <a href="'+canvas_url+'inner.php?id='+videos.id+'" class="title"><h4>'+videos.title+'</h4></a>\
+			                                                    <div class="meta">\
+			                                                    </div>\
+			                                                </div>\
+			                                            </div>\
+			                                        </div></div>';
+
+							} 
+					}
+
+						$("#jsid-post-playlist-container").append(resultDiv);
+			    		$("#jsid-post-playlist").tinyscrollbar();
+ 
+			    		if($("#video-"+curr_video_id).next().hasClass('sidear_listing')){
+			    			next_video_id =$("#video-"+curr_video_id).next().data('id');
+			    		}else{
+			    			next_video_id =  $('.sidear_listing:eq(0)').data('id');
+						}
+
+
+				   		previous_video_id = 0;
+						
+
+						//curr_index = $("#video-"+curr_video_id).index();
+							//next_video_id = $('.sidear_listing:eq('+(curr_index-2)+')').data('id');
+
+						$("#next_btn").attr('href','javascript:;');
+						resultDiv = '';
+ 						if (next < totalrecords)
+						{
+	 						$("#next_btn").attr('href','javascript:ShowNextVideo('+next+','+next_video_id+');');
+	 					}
+						else
+						{
+							$("#next_btn").attr('href','javascript:;');
+						}
+ 
+
+						$("#previous_btn").attr('href','javascript:;');
+	 			
+						if(start_limit>0 && previous>=0)
+						{
+							$("#previous_btn").attr('href','javascript:ShowNextVideo('+previous+','+previous_video_id+');');
+	 					}
+						else
+						{
+							$("#previous").attr('href','javascript:;');
+						}
+			   
+
+ 		 		}
+			
+			  	
+ 			}, "json" );
+ 	}; 
+ 	
+// get all videos
+	$.GetInnerGallery = function()
+	{
+		 
+		var cat_id = 0;
+
+		if(parseInt($("#cat_id").val())){
+
+			cat_id = $("#cat_id").val();
+		}
+		 
+ 		
+		var noOfRecords		= 15;
+		var start_limit = 0; 
+		var Error_msg = '';
+		var orderBy = 'DESC';
+ 		var resultDiv = '';
+		var SortBy = 'like';
+		gal_inprogress = 1;
+
+		$.post(canvas_url+"api/get-videos.php",  {   start:start_limit,
+			noOfRecords:noOfRecords,
+			SortBy:SortBy,
+			OrderBy:orderBy,
+			action:'getVideos',
+			cat_id:cat_id}, function(data){
+			
+ 
+				if (data.data.length>0)
+				{
+				   var totalrecords = data.totalrecords;
+				   var all_videos   = data.data;
+		 		   
+				   	resultDiv += $.getInnerGalHtml(all_videos);	
+				   
+				   
+
+		 		}else{
+						 if(gallery_start == 0){
+			   				resultDiv +='<span class="no-record-found" style="display:table;">No Videos Found</span>';
+			   			}
+		 	  	}
+			 
+			  	$("#jsid-sidebar-post-grid-container").append(resultDiv);
+			  
+ 			}, "json" );
+ 	}; 
+
+ 	$.getInnerGalHtml = function(all_videos){
+
+var currentVideos = all_videos.length;
+		   var videos = '';
+		var resultDiv = '';
+ 		 for (var i=0;i<currentVideos;i++)
+		   { 	
+			
+				videos = all_videos[i];
+  				
+ 				if(videos.title.length > 80) videos.name.substr(0,80)+'...';
+ 				if(videos.description.length > 150) videos.description.substr(0,150)+'...';
+
+
+				resultDiv +=  '<div class="badge-grid-item badge-post-item-a5dNq6" data-hashed-id="a5dNq6">\
+                                <div class="item clearfix r-17-7">\
+                                    <a class="img-container" href="'+canvas_url+'inner.php?id='+videos.id+'" >\
+                                        <div class="responsivewrapper" style="background: url('+videos.thmbnail+') center; background-size: cover;"></div>\
+                                    </a>\
+                                    <div class="info"><a class="title" href="'+canvas_url+'inner.php?id='+videos.id+'"><h4>'+videos.title+'</h4></a>\
+                                    </div>\
+                                </div>\
+                            </div>';
+
+			} 
+			return resultDiv;
+
+ 		 
+
+ 	};
+	// get all videos
+	$.GetGallery = function()
+	{
+		if(gal_inprogress == 1){
+			return;
+		}
+		
+		var cat_id = 0;
+
+		if(parseInt($("#cat_id").val())){
+
+			cat_id = $("#cat_id").val();
+		}
+		
+ 		$(".gallery-tabs").hide();
+
+ 		
+		var noOfRecords		= 10;
+		var start_limit = $("#gallery_start").val(); 
+		var Error_msg = '';
+		var orderBy = '';
+ 		var resultDiv = '';
+ 		var div ='';
+		var SortBy = '';
+ 		var name='';
+ 		var mode = $("#mode").val();
+
+ 		if(start_limit > 0){
+			$('.galspinner').show();
+		}
+		
+
+
+		if($('#SortBy').val() != ''){
+			SortBy = $('#SortBy').val();
+		}
+		if($('#orderBy').val() != ''){
+			orderBy = $('#orderBy').val();
+		}
+		gal_inprogress = 1;
+
+		$.post(canvas_url+"api/get-videos.php",  {   start:start_limit,
+			noOfRecords:noOfRecords,
+			SortBy:SortBy,
+			OrderBy:orderBy,
+			action:'getVideos',
+			cat_id:cat_id}, function(data){
+			
+				 
+			$('.galspinner').hide();
+			$(".gallery-tabs").show();
+ 
+		if (data.data.length>0)
+		{
+		   var totalrecords = data.totalrecords;
+		   var all_videos   = data.data;
+ 		   var videos = '';
+
+		   if(mode == 'home'){
+		   		resultDiv += $.getHomeGalHtml(all_videos);	
+		   }
+		   if(mode == 'inner'){
+		   		resultDiv += $.getInnerHtml(all_videos);	
+		   }
+		   
+
+ 		}else{
+				 if(start_limit == 0){
+	   			resultDiv +='<span class="no-record-found" style="display:table;">No Videos Found</span>';
+	   			}
+ 	  	}
+			  gallery_start = $("#gallery_start").val();
+			  
+			  if(gallery_start == 0){
+ 			  	$("#home_list").html(resultDiv);
+			  }else{
+			  	$("#home_list").append(resultDiv);
+			  }
+			  gal_inprogress = 0;
+			  gallery_start = parseInt(gallery_start) + parseInt(noOfRecords);
+
+ 			$("#gallery_start").val(gallery_start);
+
+			 if( parseInt(totalrecords) > parseInt($("#listings li").length)){
+			  	$(".load-more").show();
+			  }else{
+				  $(".load-more").hide();
+			  }
+ 			  
+			  $(".video-thumb").bind('click',function() {
+ 					
+ 					$.ShowVideo(this);	
+    		   });
+ 			   
+ 			}, "json" );
+ 	}; 
+
+ 	$.getHomeGalHtml = function(all_videos){
+ 		var currentVideos = all_videos.length;
+		   var videos = '';
+		var resultDiv = '';
+ 		 for (var i=0;i<currentVideos;i++)
+		   { 	
+			
+				videos = all_videos[i];
+  				
+ 				if(videos.title.length > 80) videos.name.substr(0,80)+'...';
+ 				if(videos.description.length > 150) videos.description.substr(0,150)+'...';
+
+
+				resultDiv +=  '<div class="badge-grid-item badge-post-item-a5wgg6">\
+                                    <div class="item twoColumn-left clearfix">\
+                                        <a class="img-container" href="'+canvas_url+'inner.php?id='+videos.id+'">\
+                                        <div class="responsivewrapper" style="background: url('+videos.thmbnail+') center; background-size: cover;">\
+                                        </div></a>\
+                                        <div class="info">\
+                                            <a class="title" data-ga-label="TitleClicked" href="'+canvas_url+'inner.php?id='+videos.id+'">\
+                                            <h4>'+videos.title+'</h4></a>\
+                                            <div class="meta">\
+                                                <p>'+videos.description+'</p>\
+                                            </div>\
+                                        </div>\
+                                    </div>\
+                                </div>';
+
+
+
+			} 
+			return resultDiv;
+ 	}
+
+
+	$.getInnerHtml = function(all_videos){
+		   var currentVideos = all_videos.length;
+		   var videos = '';
+		   var resultDiv = '';
+
+ 		 for (var i=0;i<currentVideos;i++)
+		   { 	
+			
+				videos = all_videos[i];
+ 				Global_videos_data[videos.id] = videos;
+ 				var curr_video_id = $("#video_id").val();
+ 				if(videos.title.length > 80) videos.name.substr(0,80)+'...';
+
+
+				if(i == 0 && curr_video_id == videos.id){
+
+					$("#next_btn").attr('href',canvas_url+'inner.php?id='+all_videos[i+1].id);
+
+				}else{
+
+					$("#next_btn").attr('href',canvas_url+'inner.php?id='+all_videos[0].id);
+				}
+
+				if(i == (currentVideos-1) && curr_video_id == videos.id){
+
+					$("#previous_btn").attr('href',canvas_url+'inner.php?id='+all_videos[currentVideos-2].id);
+				}else{
+					$("#previous_btn").attr('href',canvas_url+'inner.php?id='+all_videos[currentVideos-1].id);
+				}
+
+ 				/*if(curr_video_id == videos.id && i != (currentVideos-1) && i != 0 ){
+ 					console.log('case 1 ');
+
+ 					$("#next_btn").attr('href',canvas_url+'inner.php?id='+all_videos[i+1].id);
+ 					$("#previous_btn").attr('href',canvas_url+'inner.php?id='+all_videos[i-1].id);
+
+ 				}
+ 				if(i == 0){
+ 					console.log('case 2');
+
+ 					$("#next_btn").attr('href',canvas_url+'inner.php?id='+all_videos[i+1].id);
+ 					$("#previous_btn").attr('href',canvas_url+'inner.php?id='+all_videos[currentVideos-1].id);
+
+
+ 				}
+ 				if(i == (currentVideos-1)){
+ 					console.log('case 3 ');
+
+ 					$("#next_btn").attr('href',canvas_url+'inner.php?id='+all_videos[0].id);
+ 					$("#previous_btn").attr('href',canvas_url+'inner.php?id='+all_videos[currentVideos-2].id);
+
+ 				}*/
+ 				/*if(i == 0){
+ 					if(curr_video_id == videos.id){
+
+ 						$("#next_btn").attr('href',canvas_url+'inner.php?id='+all_videos[i+1].id);
+ 					}else{
+ 						$("#next_btn").attr('href',canvas_url+'inner.php?id='+videos.id);
+ 					}
+  					
+
+ 					
+ 				}
+ 				if(i == (currentVideos-1)){
+
+ 					if(curr_video_id == videos.id){
+
+ 						$("#previous_btn").attr('href',canvas_url+'inner.php?id='+all_videos[0].id);
+
+ 					}else{
+
+ 						$("#previous_btn").attr('href',canvas_url+'inner.php?id='+videos.id);
+ 					}*/
+    
+
+				resultDiv +=  '<div class="badge-grid-item"  data-hashed-id="a5XqX7" >\
+                                            <div class="item clearfix post-playlist">\
+                                                <a href="'+canvas_url+'inner.php?id='+videos.id+'" class="img-container left_nav_video" data-id="'+videos.id+'" >\
+                                                    <div style="background: url('+videos.thmbnail+') center; background-size: cover;" class="responsivewrapper"></div>\
+                                                    <div class="responsivewrapper playing-mask hide"></div>\
+                                                </a>\
+                                                <div class="info">\
+                                                <a href="'+canvas_url+'inner.php?id='+videos.id+'" class="title"><h4>'+videos.title+'</h4></a>\
+                                                    <div class="meta">\
+                                                    </div>\
+                                                </div>\
+                                            </div>\
+                                        </div></div>';
+
+
+
+			} 
+			return resultDiv;
+	}
 	// validates a email address
 	function isValidEmail(em_address) 
 	{
@@ -527,8 +1084,25 @@ function gmailLogin(id,email, user_name, pic_path) {
 	} // function ends
 
 
-	
+	$(".publishbtn").bind('click',function(){
+			
+			var shareImage = $("#shareImage").val(); 
+			var title = $("#video_title").val(); 
+			var description = $("#video_desc").val(); 
+			var uid = $("#uid").val(); 
 
+ 			
+			Globalobj = {
+			method: 'feed',
+			link : canvas_url+'inner.php?id='+video_id,    
+			picture: shareImage,
+			name: title,
+			caption: '9GAG TV',
+			description: description
+			}; 
+			
+			FB.ui(Globalobj, $.UpdateVideo(video_id, uid, 'share'));
+});
 	
 	function shareResp(response){
  
@@ -537,6 +1111,30 @@ function gmailLogin(id,email, user_name, pic_path) {
 				  $.UpdateVideo(global_video_id, uid, 'share');
  		} 
  	}
+	$.UpdateVideo = function(video_id,uid,type){
+		
+		// update log
+		$.post(API_URL+"get-videos.php", {action:'updateVideo', uid:uid, id:video_id, type:type}, function(data){
+			if(data.status == 'success'){
+				if(type == 'like' || type == 'dislike'){
+
+				var total = 0;
+				if(type == 'like'){
+					$(".vote_up_btns").removeClass('btn-invert').addClass('btn-primary');
+					total = parseInt($("#like_count").text())+1;
+					$("#like_count").text(total);
+				}else{
+					$(".vote_down_btns").removeClass('btn-invert').addClass('btn-primary');
+					total = parseInt($("#like_count").text())-1;
+					$("#like_count").text(total);
+				}
+			}
+				
+
+			}
+ 		}, "json" );
+	};
+
 
 function parseVideo(url) {
 
@@ -546,10 +1144,12 @@ function parseVideo(url) {
     if (RegExp.$3.indexOf('youtu') > -1) {
         type = 'youtube';
         video_id =  RegExp.$6;
+        $("#daily_motion_image").val(0);
     }
     if (RegExp.$3.indexOf('vimeo') > -1) {
         type = 'vimeo';
         video_id =  RegExp.$6;
+         $("#daily_motion_image").val(0);
     }
 
     if (RegExp.$3.indexOf('dailymotion') > -1) {
@@ -557,8 +1157,28 @@ function parseVideo(url) {
         video_id =  url.split('/').pop();
         video_id = video_id.split('_');
         video_id = video_id[0];
+
+        $.ajax({
+		    type: "GET",
+		    url:"https://api.dailymotion.com/video/" + encodeURIComponent(video_id) + "?fields=thumbnail_url,duration",
+		    dataType: "jsonp",
+		    cache: true,
+		    success: function(data) {
+		        $.each(data, function(i, item){
+		           if(i == 0){
+		           		$("#daily_motion_image").val(item);
+		           }else{
+		           		$("#daily_motion_duration").val(item);
+		           }
+		            
+		             
+		       });
+		    }
+		});
+ 
     }
     $("#video_id").val(video_id);
+
     return {
         provider: type,
         id: video_id 
@@ -587,6 +1207,8 @@ $(function(){
 					}else if (videoData.provider == 'dailymotion'){
 					  url.val('http://www.dailymotion.com/embed/video/'+videoData.id);
 					}
+
+
 
 			}
 		}
@@ -623,10 +1245,16 @@ $(function(){
 	$("#video_submit").click(function(){
 		$.SubmitVideo();
 	});
-$(".resetpass").click(function(){
+	$(".resetpass").click(function(){
 		$.ChangePassWord();
 	});
+	$(".updatePass").click(function(){
+		$.updatePass();
+	});
 	
+	$(".save_profile").click(function(){
+		$.updateProfile();
+	});
 
 	//Facebook Connect
 	$(".login").click(function(){
@@ -644,11 +1272,8 @@ $(".resetpass").click(function(){
 		
 
 	$(".fbconnectbtn").click(function(){
-		/*uid = $("#s_user_id").val();
-		if(uid > 0){
-			window.location = 'upload-video.php';
-		}else{*/
-		if(navigator.userAgent.match('CriOS')){
+		 
+	/*	if(navigator.userAgent.match('CriOS')){
 			uid = $("#s_user_id").val();
 			 
 			if(uid > 0){
@@ -657,10 +1282,10 @@ $(".resetpass").click(function(){
 			window.top.location = 'https://www.facebook.com/dialog/oauth?client_id='+application_id+'&redirect_uri='+decodeURIComponent(canvas_url)+'&scope=email&user_friends';
 		}
 
-	}else{
+	}else{*/
 			$.ConnectFacebook('home');
-	}
-		//}
+	//}
+		 
 		
 	});
 	
